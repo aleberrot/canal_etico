@@ -14,7 +14,7 @@ public class Denuncia {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String codigoUnico;
 
     private String tipo;
@@ -25,12 +25,16 @@ public class Denuncia {
     @Column(columnDefinition = "TEXT")
     private String personasInvolucradas;
 
+    @Column
     private LocalDate fechaIncidente;
 
+    @Column
     private String archivoPath;
 
     private String passwordHash;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private String estado;
 
     @Column(columnDefinition = "TEXT")
