@@ -17,7 +17,7 @@ public record CrearDenunciaResponse(
                 denuncia.getCodigoUnico(),
                 denuncia.getTipo(),
                 denuncia.getDescripcion(),
-                denuncia.getEstado(),
+                denuncia.getEstado().name(),
                 denuncia.getFechaIncidente()
         );
     }

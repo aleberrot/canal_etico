@@ -47,7 +47,7 @@ public class DenunciaService {
         denuncia.setCodigoUnico(generarCodigoUnico());
         denuncia.setTipo(request.tipo());
         denuncia.setDescripcion(request.descripcion());
-        denuncia.setEstado(String.valueOf(EstadoDenuncia.RECIBIDA));
+        denuncia.setEstado(EstadoDenuncia.valueOf(String.valueOf(EstadoDenuncia.RECIBIDA)));
         denuncia.setArchivoPath(archivoPath);
 
         denunciaRepository.save(denuncia);
@@ -121,7 +121,7 @@ public class DenunciaService {
                         new DenunciaNotFoundException("Denuncia no encontrada")
                 );
 
-        denuncia.setEstado(String.valueOf(estado));
+        denuncia.setEstado(EstadoDenuncia.valueOf(String.valueOf(estado)));
 
         denunciaRepository.save(denuncia);
 

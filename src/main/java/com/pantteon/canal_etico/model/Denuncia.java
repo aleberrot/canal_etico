@@ -35,7 +35,7 @@ public class Denuncia {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String estado;
+    private EstadoDenuncia estado;
 
     @Column(columnDefinition = "TEXT")
     private String respuestaAdmin;
