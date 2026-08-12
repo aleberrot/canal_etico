@@ -14,3 +14,7 @@ spring:
 
 server:
   port: 8080
+
+app:
+  notifications:
+    denuncias-recipient: Christian.pinochet@yahoo.cl
