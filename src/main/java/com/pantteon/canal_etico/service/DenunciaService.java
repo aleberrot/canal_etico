@@ -189,8 +189,9 @@ public class DenunciaService {
         empresaService.buscarPorCodigo(codigoEmpresa);
         return new EstadisticasEmpresaResponse(
                 denunciaRepository.countByEmpresaCodigo(codigoEmpresa),
-                denunciaRepository.countByEmpresaCodigoAndTipoDenuncia(codigoEmpresa, TipoDenuncia.LEY_KARIN),
                 denunciaRepository.countByEmpresaCodigoAndTipoDenuncia(codigoEmpresa, TipoDenuncia.GENERAL),
+                denunciaRepository.countByEmpresaCodigoAndTipoDenuncia(codigoEmpresa, TipoDenuncia.LEY_KARIN),
+                denunciaRepository.countByEmpresaCodigoAndEstado(codigoEmpresa, EstadoDenuncia.RECIBIDA),
                 denunciaRepository.countByEmpresaCodigoAndEstado(codigoEmpresa, EstadoDenuncia.EN_REVISION),
                 denunciaRepository.countByEmpresaCodigoAndEstado(codigoEmpresa, EstadoDenuncia.CERRADA)
         );

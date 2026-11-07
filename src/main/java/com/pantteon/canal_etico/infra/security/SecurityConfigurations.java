@@ -1,6 +1,6 @@
 package com.pantteon.canal_etico.infra.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -73,23 +73,27 @@ public class SecurityConfigurations {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean public UserDetailsService userDetailsService(){
+    @Bean
+    public UserDetailsService userDetailsService(
+            @Value("${ADMIN_PASSWORD}") String adminPassword) {
+        if (adminPassword.isBlank()) {
+            throw new IllegalArgumentException("ADMIN_PASSWORD must not be blank");
+        }
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder().encode("admin123"))
+                .password(passwordEncoder().encode(adminPassword))
                 .roles("ADMIN")
                 .build();
 
         return new InMemoryUserDetailsManager(admin);
     }
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource(
+            @Value("${FRONTEND_ORIGIN:http://localhost:5173}") String frontendOrigin) {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173"
-        ));
+        configuration.setAllowedOrigins(List.of(frontendOrigin));
 
         configuration.setAllowedMethods(List.of(
                 "GET",
