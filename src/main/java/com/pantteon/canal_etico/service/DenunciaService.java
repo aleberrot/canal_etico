@@ -1,6 +1,7 @@
 package com.pantteon.canal_etico.service;
 
 import com.pantteon.canal_etico.dto.ActualizarDetalleAdminRequest;
+import com.pantteon.canal_etico.dto.AporteDenunciaResponse;
 import com.pantteon.canal_etico.dto.CrearDenunciaRequest;
 import com.pantteon.canal_etico.dto.CrearDenunciaResponse;
 import com.pantteon.canal_etico.dto.DenunciaAdminResponse;
@@ -10,29 +11,36 @@ import com.pantteon.canal_etico.exception.BusinessException;
 import com.pantteon.canal_etico.exception.DenunciaNotFoundException;
 import com.pantteon.canal_etico.exception.InvalidCredentialsException;
 import com.pantteon.canal_etico.exception.ResourceNotFoundException;
+import com.pantteon.canal_etico.model.AporteDenuncia;
 import com.pantteon.canal_etico.model.Denuncia;
 import com.pantteon.canal_etico.model.Empresa;
 import com.pantteon.canal_etico.model.EstadoDenuncia;
 import com.pantteon.canal_etico.model.TipoDenuncia;
+import com.pantteon.canal_etico.repository.AporteDenunciaRepository;
 import com.pantteon.canal_etico.repository.DenunciaRepository;
 import com.pantteon.canal_etico.repository.EmpresaRepository;
 import com.pantteon.canal_etico.util.CodeGenerator;
 import jakarta.validation.Valid;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DenunciaService {
+    private final AporteDenunciaRepository aporteRepository;
+    private final StorageKeyGenerator storageKeyGenerator;
     private final FileStorageService fileStorageService;
     private final DenunciaRepository denunciaRepository;
     private final EmpresaRepository empresaRepository;
@@ -46,6 +54,11 @@ public class DenunciaService {
             MultipartFile archivo
     ) {
         validarSegunTipo(request);
+        validarArchivo(archivo);
+        if (request.terminosAceptados() != null &&
+                (!request.terminosAceptados() || request.versionTerminos() == null || request.versionTerminos().isBlank())) {
+            throw new BusinessException("Debes aceptar los términos e indicar su versión");
+        }
 
         Empresa empresa = empresaRepository.findByCodigo(request.codigoEmpresa())
                 .orElseThrow(() -> new ResourceNotFoundException("Empresa no encontrada"));
@@ -84,6 +97,11 @@ public class DenunciaService {
         denuncia.setTestigos(request.testigos());
         denuncia.setEstado(EstadoDenuncia.valueOf(String.valueOf(EstadoDenuncia.RECIBIDA)));
         denuncia.setArchivoPath(archivoPath);
+        if (archivoPath != null) denuncia.setNombreArchivo(storageKeyGenerator.obtenerNombreDescarga(archivoPath));
+        if (Boolean.TRUE.equals(request.terminosAceptados())) {
+            denuncia.setTerminosAceptadosAt(Instant.now());
+            denuncia.setVersionTerminos(request.versionTerminos().trim());
+        }
         denuncia.setEmpresa(empresa);
         denuncia.setCreatedAt(LocalDate.now());
         denuncia.setUpdatedAt(LocalDate.now());
@@ -128,6 +146,7 @@ public class DenunciaService {
         return codigo.toString();
     }
     */
+    @Transactional(readOnly = true)
     public SeguimientoDenunciaResponse consultarDenuncia(String codigo, String password) {
         var denuncia = denunciaRepository
                 .findByCodigoUnico(codigo)
@@ -329,28 +348,78 @@ public class DenunciaService {
             );
         }
 
-        if (!informacionVacia) {
-            denuncia.setInformacionAdicional(
-                    informacion.trim()
-            );
-        }
-
+        validarArchivo(archivo);
+        var aporte = new AporteDenuncia();
+        aporte.setDenuncia(denuncia);
+        aporte.setInformacion(informacionVacia ? null : informacion.trim());
         if (!archivoVacio) {
-            String documentoPath = fileStorageService.guardarArchivo(
-                    archivo,
-                    denuncia.getEmpresa().getCodigo(),
-                    denuncia.getCodigoUnico()
-            );
-
-            denuncia.setDocumentoAdicionalPath(documentoPath);
+            // Existing storage generates a fresh UUID for every upload, avoiding collisions.
+            String key = fileStorageService.guardarArchivo(archivo,
+                    denuncia.getEmpresa().getCodigo(), denuncia.getCodigoUnico());
+            aporte.setArchivoObjectKey(key);
+            aporte.setNombreArchivo(storageKeyGenerator.obtenerNombreDescarga(key));
         }
-
+        aporteRepository.saveAndFlush(aporte);
         denuncia.setUpdatedAt(LocalDate.now());
+        denunciaRepository.save(denuncia);
+        return mapToSeguimientoResponse(denuncia);
+    }
 
-        Denuncia actualizada =
-                denunciaRepository.save(denuncia);
+    private void validarArchivo(MultipartFile archivo) {
+        if (archivo != null && archivo.getSize() > 50L * 1024 * 1024) {
+            throw new MaxUploadSizeExceededException(50L * 1024 * 1024);
+        }
+    }
 
-        return mapToSeguimientoResponse(actualizada);
+    private boolean tieneTexto(String texto) {
+        return texto != null && !texto.isBlank();
+    }
+
+    private List<AporteDenunciaResponse> aportes(Denuncia denuncia) {
+        var resultado = new ArrayList<AporteDenunciaResponse>();
+        if (tieneTexto(denuncia.getInformacionAdicional()) || tieneTexto(denuncia.getDocumentoAdicionalPath())) {
+            boolean archivo = tieneTexto(denuncia.getDocumentoAdicionalPath());
+            resultado.add(new AporteDenunciaResponse(
+                    "legacy", denuncia.getInformacionAdicional(),
+                    archivo ? storageKeyGenerator.obtenerNombreDescarga(denuncia.getDocumentoAdicionalPath()) : null,
+                    archivo, null, true));
+        }
+        aporteRepository.findByDenunciaIdOrderByCreatedAtAscIdAsc(denuncia.getId()).forEach(aporte ->
+                resultado.add(new AporteDenunciaResponse(
+                        aporte.getId().toString(), aporte.getInformacion(), aporte.getNombreArchivo(),
+                        tieneTexto(aporte.getArchivoObjectKey()), aporte.getCreatedAt(), false)));
+        return resultado;
+    }
+
+    @Transactional(readOnly = true)
+    public Resource descargarAportePublico(String codigo, String password, String aporteId) {
+        Denuncia denuncia = denunciaRepository.findByCodigoUnico(codigo)
+                .orElseThrow(() -> new DenunciaNotFoundException("Código o contraseña incorrectos"));
+        validarPasswordDenuncia(denuncia, password);
+        return archivoAporte(denuncia, aporteId);
+    }
+
+    @Transactional(readOnly = true)
+    public Resource descargarAporteAdmin(String codigo, String aporteId) {
+        Denuncia denuncia = denunciaRepository.findByCodigoUnico(codigo)
+                .orElseThrow(() -> new DenunciaNotFoundException("Denuncia no encontrada"));
+        return archivoAporte(denuncia, aporteId);
+    }
+
+    private Resource archivoAporte(Denuncia denuncia, String aporteId) {
+        String key;
+        if ("legacy".equals(aporteId)) {
+            key = denuncia.getDocumentoAdicionalPath();
+        } else {
+            UUID id;
+            try { id = UUID.fromString(aporteId); }
+            catch (IllegalArgumentException ex) { throw new ResourceNotFoundException("Aporte no encontrado"); }
+            key = aporteRepository.findByIdAndDenunciaId(id, denuncia.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Aporte no encontrado"))
+                    .getArchivoObjectKey();
+        }
+        if (!tieneTexto(key)) throw new ResourceNotFoundException("Archivo no encontrado");
+        return fileStorageService.cargarArchivo(key);
     }
 
     private DenunciaAdminResponse mapToAdminResponse(
@@ -377,7 +446,11 @@ public class DenunciaService {
                 denuncia.getConclusionesMedidas(),
                 denuncia.getInformacionAdicional(),
                 denuncia.getCreatedAt(),
-                denuncia.getUpdatedAt()
+                denuncia.getUpdatedAt(),
+                aportes(denuncia),
+                tieneTexto(denuncia.getArchivoPath()),
+                denuncia.getNombreArchivo() != null ? denuncia.getNombreArchivo() :
+                        (tieneTexto(denuncia.getArchivoPath()) ? storageKeyGenerator.obtenerNombreDescarga(denuncia.getArchivoPath()) : null)
         );
     }
 
@@ -394,7 +467,8 @@ public class DenunciaService {
                 denuncia.getConclusionesMedidas(),
                 denuncia.getCreatedAt(),
                 denuncia.getUpdatedAt(),
-                denuncia.getFechaIncidente()
+                denuncia.getFechaIncidente(),
+                aportes(denuncia)
         );
     }
 }

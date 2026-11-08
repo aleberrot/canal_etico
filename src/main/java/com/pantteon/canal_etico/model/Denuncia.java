@@ -81,6 +81,17 @@ public class Denuncia {
 
     private String documentoAdicionalPath;
 
+    // Nullable additions preserve all existing reports.
+    private java.time.Instant terminosAceptadosAt;
+    private String versionTerminos;
+    private String nombreArchivo;
+
+    @OneToMany(mappedBy = "denuncia")
+    @OrderBy("createdAt ASC, id ASC")
+    @lombok.ToString.Exclude
+    @lombok.EqualsAndHashCode.Exclude
+    private java.util.List<AporteDenuncia> aportes = new java.util.ArrayList<>();
+
     private LocalDate createdAt;
     private LocalDate updatedAt;
 }

@@ -6,11 +6,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.time.LocalTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleUploadSize(MaxUploadSizeExceededException ex) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(new ErrorResponse(413, "El archivo o la solicitud supera el tamaño permitido."));
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestPartException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidRequest(Exception ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(400, "La solicitud contiene datos inválidos o incompletos."));
+    }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex){

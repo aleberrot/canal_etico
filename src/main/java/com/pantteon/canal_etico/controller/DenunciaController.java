@@ -48,6 +48,15 @@ public class DenunciaController {
 
     }
 
+    public record DescargarAporteRequest(@jakarta.validation.constraints.NotBlank String password) {}
+
+    @PostMapping("/{codigo}/aportes/{aporteId}/archivo")
+    public ResponseEntity<org.springframework.core.io.Resource> descargarAporte(
+            @PathVariable String codigo, @PathVariable String aporteId,
+            @Valid @RequestBody DescargarAporteRequest request) {
+        return ArchivoResponse.descargar(denunciaService.descargarAportePublico(codigo, request.password(), aporteId));
+    }
+
     @PostMapping(value = "/{codigo}/informacion-adicional", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Agregar información adicional a una denuncia general")
     public ResponseEntity<SeguimientoDenunciaResponse> agregarInformacionAdicional(

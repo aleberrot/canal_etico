@@ -35,6 +35,7 @@ public class SecurityConfigurations {
                                 "/api/denuncias",
                                 "/api/denuncias/seguimiento",
                                 "/api/denuncias/*/informacion-adicional",
+                                "/api/denuncias/*/aportes/*/archivo",
                                 "/api/empresas/*"
                         ).permitAll()
                         .requestMatchers(

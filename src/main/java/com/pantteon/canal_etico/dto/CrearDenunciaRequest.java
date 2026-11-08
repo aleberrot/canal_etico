@@ -48,6 +48,19 @@ public record CrearDenunciaRequest(
 
         @NotBlank(message = "Debe establecer una contraseña para seguimiento")
         @Size(min = 6, message = "La contraseña debe tener mínimo 6 caracteres")
-        String password
+        String password,
+
+        Boolean terminosAceptados,
+        @Size(max = 100) String versionTerminos
 ) {
+    // Source compatibility for existing callers; older JSON may omit consent.
+    public CrearDenunciaRequest(String codigoEmpresa, TipoDenuncia tipoDenuncia,
+            String telefonoDenunciante, String emailDenunciante, String nombreDenunciante,
+            String testigos, String delitoCodigo, String delitoTipificacion, String delitoDescripcion,
+            RelacionEmpresa relacionEmpresa, String descripcion, String personasInvolucradas,
+            LocalDate fechaIncidente, String password) {
+        this(codigoEmpresa, tipoDenuncia, telefonoDenunciante, emailDenunciante, nombreDenunciante,
+                testigos, delitoCodigo, delitoTipificacion, delitoDescripcion, relacionEmpresa,
+                descripcion, personasInvolucradas, fechaIncidente, password, null, null);
+    }
 }

@@ -79,6 +79,11 @@ public class AdminDenunciaController {
                 .body(file);
     }
 
+    @GetMapping("/{codigo}/aportes/{aporteId}/archivo")
+    public ResponseEntity<Resource> descargarAporte(@PathVariable String codigo, @PathVariable String aporteId) {
+        return ArchivoResponse.descargar(denunciaService.descargarAporteAdmin(codigo, aporteId));
+    }
+
     @PatchMapping("/{codigo}/detalle")
     public ResponseEntity<DenunciaAdminResponse> actualizarDetalle(
             @PathVariable String codigo,
