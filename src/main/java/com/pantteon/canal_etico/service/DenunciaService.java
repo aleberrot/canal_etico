@@ -55,8 +55,8 @@ public class DenunciaService {
     ) {
         validarSegunTipo(request);
         validarArchivo(archivo);
-        if (request.terminosAceptados() != null &&
-                (!request.terminosAceptados() || request.versionTerminos() == null || request.versionTerminos().isBlank())) {
+        if (!Boolean.TRUE.equals(request.terminosAceptados()) ||
+                request.versionTerminos() == null || request.versionTerminos().isBlank()) {
             throw new BusinessException("Debes aceptar los términos e indicar su versión");
         }
 
@@ -468,7 +468,11 @@ public class DenunciaService {
                 denuncia.getCreatedAt(),
                 denuncia.getUpdatedAt(),
                 denuncia.getFechaIncidente(),
-                aportes(denuncia)
+                aportes(denuncia),
+                new com.pantteon.canal_etico.dto.EmpresaPublicResponse(
+                        denuncia.getEmpresa().getCodigo(), denuncia.getEmpresa().getNombre(),
+                        denuncia.getEmpresa().getLogo(), denuncia.getEmpresa().getBanner(),
+                        denuncia.getEmpresa().isActiva())
         );
     }
 }
