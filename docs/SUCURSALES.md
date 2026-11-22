@@ -24,9 +24,9 @@ El editor limita a 10 sentencias por ejecución; se aplicó un lote de nueve sen
 
 ## Validación
 
-20 pruebas Java aprobadas (UrgentCorrectionsTest, MathiesenCompanyTest, SucursalServiceTest). En Windows se precargó byte-buddy-agent 1.17.8 con -DargLine=-javaagent:RUTA para evitar el bloqueo de auto-attach del entorno. No se modificó la aplicación para omitir pruebas. El test SpringBoot de contexto que exige configuración externa no se ejecutó.
+24 pruebas Java aprobadas (UrgentCorrectionsTest, MathiesenCompanyTest, SucursalServiceTest y SucursalesIntegrationTest). En Windows se precargó byte-buddy-agent 1.17.8 con -DargLine=-javaagent:RUTA para evitar el bloqueo de auto-attach del entorno. No se modificó la aplicación para omitir pruebas. Se ejecutó el contexto completo de Spring Boot y MockMvc con H2 aislada: autenticación ADMIN, catálogo por empresa, creación/edición/desactivación, multipart GENERAL/LEY_KARIN, seguimiento con nombre histórico y rechazo de sucursales ajenas/inactivas. Correo y archivos se sustituyeron por mocks. La prueba preexistente de contexto con configuración externa no se ejecutó; la nueva integración arranca el contexto completo sin servicios reales.
 
-51 pruebas frontend aprobadas, TypeScript estricto y compilación Vite aprobados. Cobertura de transporte multipart en ambos tipos, selección requerida, autenticación administrativa, errores de catálogo, aislamiento por empresa, desactivación y nombre histórico. No se crearon denuncias reales ni enviaron correos de prueba. Falta validación integrada en un entorno candidato con ambos servicios conectados antes de la publicación del módulo.
+51 pruebas frontend aprobadas, TypeScript estricto y compilación Vite aprobados. Cobertura de transporte multipart en ambos tipos, selección requerida, autenticación administrativa, errores de catálogo, aislamiento por empresa, desactivación y nombre histórico. No se crearon denuncias reales ni enviaron correos de prueba. Se completó integración de API/seguridad/persistencia en H2. La navegación completa de navegador con frontend y backend candidatos conectados y la validación de aceptación de la candidata quedan antes de la publicación del módulo.
 
 ## Publicación coordinada pendiente
 
