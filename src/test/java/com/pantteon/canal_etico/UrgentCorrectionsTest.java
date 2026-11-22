@@ -21,8 +21,9 @@ class UrgentCorrectionsTest {
     AporteDenunciaRepository contributions = mock(AporteDenunciaRepository.class);
     FileStorageService storage = mock(FileStorageService.class);
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
+    SucursalService branches = mock(SucursalService.class);
     DenunciaService service = new DenunciaService(contributions, mock(StorageKeyGenerator.class),
-            storage, reports, companies, mock(EmpresaService.class), mock(EmailService.class), encoder);
+            storage, reports, companies, mock(EmpresaService.class), branches, mock(EmailService.class), encoder);
     Empresa company;
 
     @BeforeEach void prepare() {
@@ -52,6 +53,20 @@ class UrgentCorrectionsTest {
         assertTrue(encoder.matches("segunda-clave", saved.get(1).getPasswordHash()));
         assertFalse(encoder.matches("primera-clave", saved.get(1).getPasswordHash()));
         assertNull(saved.get(1).getArchivoPath());
+    }
+    @Test void selectedBranchIsPersistedWithHistoricalName() {
+        var branch = new Sucursal(); branch.setCodigo("chile"); branch.setNombre("Mathiesen Chile");
+        when(branches.validar("emp-01", null)).thenReturn(branch);
+        service.crearDenuncia(request(TipoDenuncia.GENERAL,"111111111","clave-prueba"),null);
+        var captor = ArgumentCaptor.forClass(Denuncia.class); verify(reports).save(captor.capture());
+        branch.setNombre("Nombre posterior");
+        assertSame(branch,captor.getValue().getSucursal());
+        assertEquals("Mathiesen Chile",captor.getValue().getSucursalNombre());
+    }
+    @Test void invalidBranchStopsStorageAndPersistence() {
+        when(branches.validar("emp-01",null)).thenThrow(new BusinessException("Sucursal ajena"));
+        assertThrows(BusinessException.class,()->service.crearDenuncia(request(TipoDenuncia.GENERAL,"111111111","clave-prueba"),null));
+        verifyNoInteractions(storage); verify(reports,never()).save(any());
     }
     @Test void karinRequiresPhoneBeforePersisting() {
         assertThrows(BusinessException.class, () ->

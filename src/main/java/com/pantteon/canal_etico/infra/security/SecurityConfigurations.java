@@ -36,7 +36,7 @@ public class SecurityConfigurations {
                                 "/api/denuncias/seguimiento",
                                 "/api/denuncias/*/informacion-adicional",
                                 "/api/denuncias/*/aportes/*/archivo",
-                                "/api/empresas/*"
+                                "/api/empresas/*", "/api/empresas/*/sucursales"
                         ).permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
@@ -117,3 +117,4 @@ public class SecurityConfigurations {
         return source;
     }
 }
+

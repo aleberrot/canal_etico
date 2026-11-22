@@ -10,7 +10,8 @@ class MathiesenCompanyTest {
         var jdbc = mock(JdbcTemplate.class);
         new MathiesenCompany().registerMathiesen(jdbc, "configured@example.invalid").run(null);
         var calls = mockingDetails(jdbc).getInvocations();
-        assertEquals(1, calls.size());
+        assertEquals(18, calls.size());
+        assertEquals(17, calls.stream().skip(1).map(c -> c.getArguments()[3]).distinct().count());
         Object[] args = calls.iterator().next().getArguments();
         String sql = (String) args[0];
         assertTrue(sql.contains("ON CONFLICT (codigo) DO NOTHING"));

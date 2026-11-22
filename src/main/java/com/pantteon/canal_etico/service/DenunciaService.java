@@ -45,6 +45,7 @@ public class DenunciaService {
     private final DenunciaRepository denunciaRepository;
     private final EmpresaRepository empresaRepository;
     private final EmpresaService empresaService;
+    private final SucursalService sucursalService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
@@ -66,6 +67,7 @@ public class DenunciaService {
             throw new BusinessException("La empresa se encuentra inactiva y no acepta denuncias");
         }
 
+        var sucursal = sucursalService.validar(empresa.getCodigo(), request.codigoSucursal());
         String codigoUnico = generarCodigoUnico();
 
         String archivoPath = null;
@@ -103,6 +105,8 @@ public class DenunciaService {
             denuncia.setVersionTerminos(request.versionTerminos().trim());
         }
         denuncia.setEmpresa(empresa);
+        denuncia.setSucursal(sucursal);
+        denuncia.setSucursalNombre(sucursal == null ? null : sucursal.getNombre());
         denuncia.setCreatedAt(LocalDate.now());
         denuncia.setUpdatedAt(LocalDate.now());
         denuncia.setFechaIncidente(request.fechaIncidente());
@@ -450,7 +454,8 @@ public class DenunciaService {
                 aportes(denuncia),
                 tieneTexto(denuncia.getArchivoPath()),
                 denuncia.getNombreArchivo() != null ? denuncia.getNombreArchivo() :
-                        (tieneTexto(denuncia.getArchivoPath()) ? storageKeyGenerator.obtenerNombreDescarga(denuncia.getArchivoPath()) : null)
+                        (tieneTexto(denuncia.getArchivoPath()) ? storageKeyGenerator.obtenerNombreDescarga(denuncia.getArchivoPath()) : null),
+                denuncia.getSucursal() == null ? null : denuncia.getSucursal().getCodigo(), denuncia.getSucursalNombre()
         );
     }
 
@@ -472,7 +477,7 @@ public class DenunciaService {
                 new com.pantteon.canal_etico.dto.EmpresaPublicResponse(
                         denuncia.getEmpresa().getCodigo(), denuncia.getEmpresa().getNombre(),
                         denuncia.getEmpresa().getLogo(), denuncia.getEmpresa().getBanner(),
-                        denuncia.getEmpresa().isActiva())
+                        denuncia.getEmpresa().isActiva()), denuncia.getSucursalNombre()
         );
     }
 }
