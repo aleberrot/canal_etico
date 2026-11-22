@@ -31,5 +31,7 @@ public record DenunciaAdminResponse(
         LocalDate updatedAt,
         java.util.List<AporteDenunciaResponse> aportes,
         boolean tieneArchivo,
-        String nombreArchivo
+        String nombreArchivo,
+        String codigoSucursal, String sucursalNombre
 ) {}
+

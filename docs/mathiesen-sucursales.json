@@ -1,0 +1,70 @@
+[
+  {
+    "codigo": "mathiesen-argentina",
+    "nombre": "Mathiesen Argentina"
+  },
+  {
+    "codigo": "mathiesen-bolivia",
+    "nombre": "Mathiesen Bolivia"
+  },
+  {
+    "codigo": "mathiesen-cam",
+    "nombre": "Mathiesen CAM"
+  },
+  {
+    "codigo": "mathiesen-colombia",
+    "nombre": "Mathiesen Colombia"
+  },
+  {
+    "codigo": "mathiesen-espana",
+    "nombre": "Mathiesen España"
+  },
+  {
+    "codigo": "mathiesen-mexico",
+    "nombre": "Mathiesen Mexico"
+  },
+  {
+    "codigo": "mathiesen-paraguay",
+    "nombre": "Mathiesen Paraguay"
+  },
+  {
+    "codigo": "mathiesen-peru",
+    "nombre": "Mathiesen Perú"
+  },
+  {
+    "codigo": "mathiesen-uruguay",
+    "nombre": "Mathiesen Uruguay"
+  },
+  {
+    "codigo": "mathiesen-chile",
+    "nombre": "Mathiesen Chile"
+  },
+  {
+    "codigo": "mathiesen-brasil",
+    "nombre": "Mathiesen Brasil"
+  },
+  {
+    "codigo": "empresa-argentina-cdv",
+    "nombre": "Empresa Argentina CDV S.A."
+  },
+  {
+    "codigo": "soolimpex",
+    "nombre": "Soolimpex"
+  },
+  {
+    "codigo": "sercoin",
+    "nombre": "Sercoin"
+  },
+  {
+    "codigo": "luval",
+    "nombre": "Luval"
+  },
+  {
+    "codigo": "quimatic",
+    "nombre": "Quimatic"
+  },
+  {
+    "codigo": "agrovet",
+    "nombre": "Agrovet"
+  }
+]

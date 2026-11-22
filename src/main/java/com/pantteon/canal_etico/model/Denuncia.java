@@ -78,6 +78,9 @@ public class Denuncia {
 
     @Column(columnDefinition = "TEXT")
     private String informacionAdicional;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="sucursal_id")
+    private Sucursal sucursal;
+    private String sucursalNombre;
 
     private String documentoAdicionalPath;
 
@@ -95,3 +98,4 @@ public class Denuncia {
     private LocalDate createdAt;
     private LocalDate updatedAt;
 }
+

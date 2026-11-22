@@ -27,6 +27,7 @@ public record SeguimientoDenunciaResponse(
 
         LocalDate fechaIncidente,
         java.util.List<AporteDenunciaResponse> aportes,
-        EmpresaPublicResponse empresa
+        EmpresaPublicResponse empresa,
+        String sucursalNombre
 ) {
 }

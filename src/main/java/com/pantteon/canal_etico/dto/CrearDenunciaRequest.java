@@ -51,8 +51,18 @@ public record CrearDenunciaRequest(
         String password,
 
         Boolean terminosAceptados,
-        @Size(max = 100) String versionTerminos
+        @Size(max = 100) String versionTerminos,
+        @Size(max = 80) String codigoSucursal
 ) {
+    public CrearDenunciaRequest(String codigoEmpresa, TipoDenuncia tipoDenuncia,
+            String telefonoDenunciante, String emailDenunciante, String nombreDenunciante,
+            String testigos, String delitoCodigo, String delitoTipificacion, String delitoDescripcion,
+            RelacionEmpresa relacionEmpresa, String descripcion, String personasInvolucradas,
+            LocalDate fechaIncidente, String password, Boolean terminosAceptados, String versionTerminos) {
+        this(codigoEmpresa,tipoDenuncia,telefonoDenunciante,emailDenunciante,nombreDenunciante,testigos,
+          delitoCodigo,delitoTipificacion,delitoDescripcion,relacionEmpresa,descripcion,personasInvolucradas,
+          fechaIncidente,password,terminosAceptados,versionTerminos,null);
+    }
     // Source compatibility for existing callers; older JSON may omit consent.
     public CrearDenunciaRequest(String codigoEmpresa, TipoDenuncia tipoDenuncia,
             String telefonoDenunciante, String emailDenunciante, String nombreDenunciante,
@@ -61,6 +71,7 @@ public record CrearDenunciaRequest(
             LocalDate fechaIncidente, String password) {
         this(codigoEmpresa, tipoDenuncia, telefonoDenunciante, emailDenunciante, nombreDenunciante,
                 testigos, delitoCodigo, delitoTipificacion, delitoDescripcion, relacionEmpresa,
-                descripcion, personasInvolucradas, fechaIncidente, password, null, null);
+                descripcion, personasInvolucradas, fechaIncidente, password, null, null, null);
     }
 }
+
