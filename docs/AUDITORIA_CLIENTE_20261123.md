@@ -1,10 +1,22 @@
 # Auditoría del Canal Ético — 23/11/2026
 
+## Estado actualizado tras la publicacion del 23/11/2026
+
+- Se mantuvo la autorizacion previa del usuario para desplegar despues de validar. Las PR frontend #5 y backend #4 quedaron fusionadas.
+- Vercel confirmo publicacion correcta del frontend 423c1e16c89725a88643b060846427670456e22b. Se observaron en el dominio real los logos y la nueva portada, los dos accesos de Mathiesen y los ejemplos emp-01 y emp-02.
+- Render publico manualmente el backend funcional 2c3f3ce28d123f37aa46516d802a3e79dbc3ad69 y lo marco Live, despliegue dep-dc1sforl550s73fe4jd0 (2m 52s). Esto resuelve el desfase de versiones diagnosticado abajo.
+- La API publica real /api/empresas/mathiesen/sucursales respondio sin introducir credenciales: 17 sucursales, todas activas, con los nombres de la PPT. Se comprobaron Mathiesen Chile, Mathiesen Peru y el resto del catalogo.
+- La comprobacion de produccion fue de lectura y navegacion: las puertas de terminos de ambos tipos siguen inicialmente sin aceptar y Continuar permanece deshabilitado. No se aceptaron terminos ni se enviaron denuncias o correos reales. El selector y los envios completos fueron probados en el entorno local aislado descrito abajo.
+- El merge backend c6854b2c28af000a993f31002946627e7705cfc3 incorpora solo pruebas y documentacion sobre la misma aplicacion publicada; no requiere otro despliegue para que funcionen las sucursales.
+- Siguen pendientes la medicion representativa de carga en produccion, SMTP/R2 reales y las observaciones de seguridad indicadas. Publicar la correccion del selector no equivale a dar esos puntos por cerrados.
+
+Las secciones siguientes conservan el diagnostico inicial y la evidencia de la candidata anterior a esta activacion. Las referencias al backend antiguo y a la publicacion pendiente describen ese estado inicial, ya corregido mediante el despliegue registrado arriba.
+
 ## Resultado
 
 La candidata cubre las observaciones funcionales de la PPT OBSERVACIONES CANAL DE DENUNCIAS_WEBETIKO_15112026.pptx (13 láminas) y se validó con frontend y Spring Boot conectados a una base H2 aislada. Se corrigieron diseño, navegación del formulario en móvil, acciones sin adjunto y accesibilidad del detalle administrativo.
 
-**Producción todavía no puede declararse cerrada:** el frontend de sucursales está publicado pero Render ejecuta un backend anterior. No se crearon denuncias ni se enviaron correos reales durante esta auditoría.
+**Diagnostico inicial antes de la activacion:** el frontend de sucursales está publicado pero Render ejecuta un backend anterior. No se crearon denuncias ni se enviaron correos reales durante esta auditoría.
 
 ## Por qué no funciona el selector en producción
 
