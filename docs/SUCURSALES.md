@@ -35,3 +35,7 @@ Mantener esta ampliación en PR separadas de las correcciones urgentes. No fusio
 ## Nota para Christian (borrador, no enviado)
 
 Las correcciones de datos reutilizados, carga de canales, logos, términos aprobados, seguimiento y adjuntos corresponden al cierre del desarrollo original. Sucursales es una ampliación funcional separada, con cambios en PostgreSQL, backend, formularios y administración; debe registrarse como adicional. El diagnóstico y eventual migración de alojamiento también se cotizan por separado. Permanecen pendientes los $150.000 CLP de la V3 y el saldo del desarrollo original; no se ha informado el monto de ese saldo ni se inventa aquí. Este documento no fija precio nuevo para sucursales ni modifica acuerdos comerciales.
+
+## Actualización de validación — 23/11/2026
+
+Se completó la navegación con frontend/API conectados a H2 aislada: ambos tipos de denuncia, aportes, adjuntos, seguimiento, gestión administrativa y sucursales. Se ejecutaron de nuevo 24 pruebas backend y se aprobaron 53 frontend. Véase [auditoría completa](AUDITORIA_CLIENTE_20261123.md). Se confirmó que Render aún ejecuta d87cba0 y requiere publicar el backend fusionado 2c3f3ce para habilitar el selector público.
