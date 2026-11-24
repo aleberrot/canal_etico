@@ -25,10 +25,10 @@ Un requisito puede estar implementado/probado localmente y pendiente de validaci
 | Frontend base | `aleberrot/canalEticov6`, main `1e08622edbfe9df27698f7556e81b224e0f8fb11` |
 | Backend base | `aleberrot/canal_etico`, master `70df3537c5f5c58ccc3c9a76b03b8884071d6c1c` |
 | Rama de trabajo | `fix-observaciones-20261123` en ambos |
-| PR frontend | {{FRONT_PR}} |
-| Commit funcional frontend | {{FRONT_COMMIT}} |
-| PR backend | {{BACK_PR}} |
-| Commit funcional backend | {{BACK_COMMIT}} |
+| PR frontend | https://github.com/aleberrot/canalEticov6/pull/6 |
+| Commit funcional frontend | `b6e1c82ebc184bf9da0605587813a9d08de045f5` |
+| PR backend | https://github.com/aleberrot/canal_etico/pull/5 |
+| Commit funcional backend | `702a1804928e9ae8ca91393bfce91e59a78541ed` |
 
 Se consultaron las ramas de ambos repositorios: no apareció una rama más reciente de WEBETIKO/Mathiesen que reemplazara estas principales. Se recuperaron del remoto los archivos relevantes para trabajar sobre su contenido actual, en un directorio de candidata separado del ensayo anterior.
 
