@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-24",
+  "productionModified": false,
+  "frontendTests": 57,
+  "javaFound": 44,
+  "javaPassed": 43,
+  "browserHarnessSkippedInNormalSuite": 1,
+  "chromeCases": 8,
+  "smtpReal": false,
+  "r2Real": false,
+  "postgresMigrationExecuted": false,
+  "npmAuditAfter": {
+    "high": 0,
+    "critical": 0
+  },
+  "publicMeasurements": {
+    "observed_utc": "2026-11-24T23:38:53.231542+00:00",
+    "measurements": [
+      {
+        "url": "https://canaletico.absoftwareworks.com/",
+        "round": 1,
+        "status": 200,
+        "ms": 8410.6,
+        "bytes": 510,
+        "server": "Vercel",
+        "assets": [
+          "/assets/index-6MnNY-8n.js",
+          "/assets/index-CIzvXdJq.css"
+        ],
+        "api_hosts": [
+          "https://canal-etico-api-w9dm.onrender.com"
+        ]
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/emp-01",
+        "round": 1,
+        "status": 200,
+        "ms": 6400.4,
+        "bytes": 130,
+        "server": "cloudflare"
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/emp-02",
+        "round": 1,
+        "status": 200,
+        "ms": 6422.5,
+        "bytes": 80,
+        "server": "cloudflare"
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/mathiesen",
+        "round": 1,
+        "status": 200,
+        "ms": 6303.1,
+        "bytes": 115,
+        "server": "cloudflare"
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/mathiesen/sucursales",
+        "round": 1,
+        "status": 200,
+        "ms": 6474.9,
+        "bytes": 1160,
+        "server": "cloudflare",
+        "count": 17
+      }
+    ]
+  },
+  "localOutbox": {
+    "events": 6,
+    "deliveredToMock": 6,
+    "subjects": [
+      "Aporte GENERAL",
+      "Aporte GENERAL",
+      "Aporte LEY_KARIN",
+      "Aporte LEY_KARIN",
+      "Nueva GENERAL",
+      "Nueva LEY_KARIN"
+    ]
+  }
+}

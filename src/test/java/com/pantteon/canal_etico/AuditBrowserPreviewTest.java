@@ -34,8 +34,13 @@ class AuditBrowserPreviewTest {
  @Autowired ObjectMapper json;
  @MockitoBean EmailService email;
  @MockitoBean FileStorageService storage;
+ @MockitoBean java.time.Clock clock;
+ @Autowired NotificacionRepository notifications;
+ @Autowired NotificationDispatcher dispatcher;
 
  @Test void serveIsolatedBrowserSession() throws Exception {
+  when(clock.instant()).thenReturn(java.time.Instant.parse("2026-11-24T00:30:00Z"));
+  when(email.configurada()).thenReturn(true);
   Map<String,Resource> uploads=new ConcurrentHashMap<>();
   when(storage.guardarArchivo(any(),anyString(),anyString())).thenAnswer(inv -> {
    MultipartFile file=inv.getArgument(0);String filename=file.getOriginalFilename();
@@ -54,5 +59,11 @@ class AuditBrowserPreviewTest {
   System.out.println("AUDIT_BROWSER_READY: local H2, 17 branches, mocked mail and files, http://127.0.0.1:18081");
   long deadline=System.nanoTime()+java.util.concurrent.TimeUnit.MINUTES.toNanos(25);
   while(System.nanoTime()<deadline && !Files.exists(Path.of("target/audit-stop"))) Thread.sleep(500);
+  dispatcher.procesarPendientes();
+  var evidence = new java.util.LinkedHashMap<String,Object>();
+  evidence.put("events", notifications.count());
+  evidence.put("deliveredToMock",notifications.findAll().stream().filter(n->n.getEstado()==NotificacionDenuncia.Estado.ENVIADA).count());
+  evidence.put("subjects",notifications.findAll().stream().map(n->(n.isAporte()?"Aporte ":"Nueva ")+n.getTipo()).sorted().toList());
+  Files.writeString(Path.of("target/audit-outbox-evidence.json"),json.writeValueAsString(evidence));
  }
 }

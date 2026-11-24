@@ -58,7 +58,7 @@ public class DenunciaController {
     }
 
     @PostMapping(value = "/{codigo}/informacion-adicional", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Agregar información adicional a una denuncia general")
+    @Operation(summary = "Agregar información adicional a una denuncia General o Ley Karin")
     public ResponseEntity<SeguimientoDenunciaResponse> agregarInformacionAdicional(
             @PathVariable String codigo,
             @RequestPart("password") String password,

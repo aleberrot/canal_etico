@@ -46,7 +46,8 @@ public class DenunciaService {
     private final EmpresaRepository empresaRepository;
     private final EmpresaService empresaService;
     private final SucursalService sucursalService;
-    private final EmailService emailService;
+    private final NotificationQueue notifications;
+    private final BusinessTime time;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -54,6 +55,7 @@ public class DenunciaService {
             CrearDenunciaRequest request,
             MultipartFile archivo
     ) {
+        Instant now = time.now();
         validarSegunTipo(request);
         validarArchivo(archivo);
         if (!Boolean.TRUE.equals(request.terminosAceptados()) ||
@@ -101,27 +103,21 @@ public class DenunciaService {
         denuncia.setArchivoPath(archivoPath);
         if (archivoPath != null) denuncia.setNombreArchivo(storageKeyGenerator.obtenerNombreDescarga(archivoPath));
         if (Boolean.TRUE.equals(request.terminosAceptados())) {
-            denuncia.setTerminosAceptadosAt(Instant.now());
+            denuncia.setTerminosAceptadosAt(now);
             denuncia.setVersionTerminos(request.versionTerminos().trim());
         }
         denuncia.setEmpresa(empresa);
         denuncia.setSucursal(sucursal);
         denuncia.setSucursalNombre(sucursal == null ? null : sucursal.getNombre());
-        denuncia.setCreatedAt(LocalDate.now());
-        denuncia.setUpdatedAt(LocalDate.now());
+        denuncia.setRegisteredAt(now);
+        denuncia.setCreatedAt(time.date(now));
+        denuncia.setLastActivityAt(time.now());
+        denuncia.setUpdatedAt(time.date(denuncia.getLastActivityAt()));
         denuncia.setFechaIncidente(request.fechaIncidente());
 
         denunciaRepository.save(denuncia);
 
-        try {
-            emailService.enviarNuevaDenuncia(denuncia);
-        } catch (Exception e) {
-            log.error(
-                    "La denuncia {} fue guardada, pero falló el envío del correo",
-                    denuncia.getCodigoUnico(),
-                    e
-            );
-        }
+        notifications.nueva(denuncia, null, now);
         return mapToResponse(denuncia);
     }
 
@@ -177,6 +173,8 @@ public class DenunciaService {
                 );
 
         denuncia.setEstado(EstadoDenuncia.valueOf(String.valueOf(estado)));
+        denuncia.setLastActivityAt(time.now());
+        denuncia.setUpdatedAt(time.date(denuncia.getLastActivityAt()));
 
         denunciaRepository.save(denuncia);
 
@@ -289,7 +287,8 @@ public class DenunciaService {
             );
         }
 
-        denuncia.setUpdatedAt(LocalDate.now());
+        denuncia.setLastActivityAt(time.now());
+        denuncia.setUpdatedAt(time.date(denuncia.getLastActivityAt()));
 
         Denuncia actualizada = denunciaRepository.save(denuncia);
 
@@ -334,12 +333,6 @@ public class DenunciaService {
 
         validarPasswordDenuncia(denuncia, password);
 
-        if (denuncia.getTipoDenuncia() == TipoDenuncia.LEY_KARIN) {
-            throw new BusinessException(
-                    "La información adicional solo está disponible para denuncias generales"
-            );
-        }
-
         boolean informacionVacia =
                 informacion == null || informacion.isBlank();
 
@@ -354,6 +347,7 @@ public class DenunciaService {
 
         validarArchivo(archivo);
         var aporte = new AporteDenuncia();
+        aporte.setCreatedAt(time.now());
         aporte.setDenuncia(denuncia);
         aporte.setInformacion(informacionVacia ? null : informacion.trim());
         if (!archivoVacio) {
@@ -364,8 +358,10 @@ public class DenunciaService {
             aporte.setNombreArchivo(storageKeyGenerator.obtenerNombreDescarga(key));
         }
         aporteRepository.saveAndFlush(aporte);
-        denuncia.setUpdatedAt(LocalDate.now());
+        denuncia.setLastActivityAt(time.now());
+        denuncia.setUpdatedAt(time.date(denuncia.getLastActivityAt()));
         denunciaRepository.save(denuncia);
+        notifications.nueva(denuncia, aporte.getId(), aporte.getCreatedAt());
         return mapToSeguimientoResponse(denuncia);
     }
 
@@ -449,13 +445,13 @@ public class DenunciaService {
                 denuncia.getDescargo(),
                 denuncia.getConclusionesMedidas(),
                 denuncia.getInformacionAdicional(),
-                denuncia.getCreatedAt(),
-                denuncia.getUpdatedAt(),
+                time.registrationDate(denuncia),
+                time.updatedDate(denuncia),
                 aportes(denuncia),
                 tieneTexto(denuncia.getArchivoPath()),
                 denuncia.getNombreArchivo() != null ? denuncia.getNombreArchivo() :
                         (tieneTexto(denuncia.getArchivoPath()) ? storageKeyGenerator.obtenerNombreDescarga(denuncia.getArchivoPath()) : null),
-                denuncia.getSucursal() == null ? null : denuncia.getSucursal().getCodigo(), denuncia.getSucursalNombre()
+                denuncia.getSucursal() == null ? null : denuncia.getSucursal().getCodigo(), denuncia.getSucursalNombre(), time.registrationInstant(denuncia), denuncia.getLastActivityAt()
         );
     }
 
@@ -470,14 +466,14 @@ public class DenunciaService {
                 denuncia.getDescripcion(),
                 denuncia.getInformacionAdicional(),
                 denuncia.getConclusionesMedidas(),
-                denuncia.getCreatedAt(),
-                denuncia.getUpdatedAt(),
+                time.registrationDate(denuncia),
+                time.updatedDate(denuncia),
                 denuncia.getFechaIncidente(),
                 aportes(denuncia),
                 new com.pantteon.canal_etico.dto.EmpresaPublicResponse(
                         denuncia.getEmpresa().getCodigo(), denuncia.getEmpresa().getNombre(),
                         denuncia.getEmpresa().getLogo(), denuncia.getEmpresa().getBanner(),
-                        denuncia.getEmpresa().isActiva()), denuncia.getSucursalNombre()
+                        denuncia.getEmpresa().isActiva()), denuncia.getSucursalNombre(), time.registrationInstant(denuncia), denuncia.getLastActivityAt()
         );
     }
 }

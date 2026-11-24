@@ -23,7 +23,7 @@ class UrgentCorrectionsTest {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
     SucursalService branches = mock(SucursalService.class);
     DenunciaService service = new DenunciaService(contributions, mock(StorageKeyGenerator.class),
-            storage, reports, companies, mock(EmpresaService.class), branches, mock(EmailService.class), encoder);
+            storage, reports, companies, mock(EmpresaService.class), branches, mock(NotificationQueue.class), new BusinessTime(java.time.Clock.systemUTC()), encoder);
     Empresa company;
 
     @BeforeEach void prepare() {

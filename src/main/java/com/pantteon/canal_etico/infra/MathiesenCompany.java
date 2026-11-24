@@ -14,8 +14,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 class MathiesenCompany {
     @Bean
     ApplicationRunner registerMathiesen(JdbcTemplate jdbc,
-            @Value("${app.notifications.denuncias-recipient}") String recipient) {
+            @Value("${MATHIESEN_NOTIFICATION_EMAIL:${app.notifications.recipients:}}") String recipientConfig) {
         return args -> {
+            String recipient = recipientConfig == null ? "" : recipientConfig.split(",")[0].trim();
             if (recipient == null || recipient.isBlank()) {
                 throw new IllegalStateException("The configured notification recipient must not be blank");
             }

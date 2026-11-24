@@ -95,6 +95,9 @@ public class Denuncia {
     @lombok.EqualsAndHashCode.Exclude
     private java.util.List<AporteDenuncia> aportes = new java.util.ArrayList<>();
 
+    // Additive nullable instants. Historical DATE values are never rewritten.
+    private java.time.Instant registeredAt;
+    private java.time.Instant lastActivityAt;
     private LocalDate createdAt;
     private LocalDate updatedAt;
 }
