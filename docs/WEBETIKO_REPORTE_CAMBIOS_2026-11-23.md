@@ -2,6 +2,10 @@
 
 **Requisitos:** PPT del 23/11/2026, 20 láminas. **Trabajo y validación:** 24/11/2026, America/Santiago. Se conserva el nombre de archivo solicitado. **Entrega:** candidata en PR; sin autorización ni ejecución de publicación productiva en esta revisión.
 
+## Reauditoría de las PR
+
+Se contrastó de nuevo la implementación con las 20 láminas. Se corrigieron tres defectos adicionales: arranque de Mathiesen existente sin correo configurado, remitente SMTP vacío y pérdida de empresa al vencer la sesión. Resultado actualizado: 49 pruebas Java, 57 frontend y 9 comprobaciones Chrome aprobadas. Detalle y límites en [AUDITORIA_PR_CLIENTE_20261124.md](AUDITORIA_PR_CLIENTE_20261124.md). No se desplegó en producción.
+
 ## Resumen ejecutivo
 
 Se implementaron fechas de negocio coherentes con Chile, aportes sucesivos para Ley Karin, cuatro clases de notificación centralizadas y persistentes, el logo nuevo recuperado de la PPT y navegación `Inicio` que conserva la empresa. Se mantienen términos aprobados, formularios separados, sucursales, trazabilidad, archivos privados y administración.
@@ -79,7 +83,7 @@ Se probó `2026-11-24T00:30:00Z` como **23/11/2026 21:30 en Chile**, ambos lados
 
 ## Correos: configuración, privacidad y fallos
 
-`NOTIFICATION_RECIPIENTS` configura, sin duplicarlos en controladores, los destinos aprobados: monica.vega@gcwlatam.com, christian.pinochet@gcwlatam.com y christian.pinochet@yahoo.cl. La plantilla `.env.example` permite preparar la configuración; no se ha aplicado al servicio real. Se conserva compatibilidad con los nombres `MAIL_*` además de `SMTP_*`. No se cambió de proveedor SMTP sin comprobarlo.
+`NOTIFICATION_RECIPIENTS` configura, sin duplicarlos en controladores, los tres destinos aprobados en la configuración central existente. La plantilla `.env.example` permite preparar la configuración; no se ha aplicado al servicio real. Se conserva compatibilidad con los nombres `MAIL_*` además de `SMTP_*`. No se cambió de proveedor SMTP sin comprobarlo.
 
 La creación o aporte y su evento se guardan juntos. El dispatcher envía después, con bloqueo de eventos pendientes, clave única, contador y estados. SMTP fallido no fuerza al denunciante a repetir la operación. Se reintenta de forma acotada; al quinto fallo se detiene para revisión. Un `Message-ID` estable permite correlación. La cola no se precarga con denuncias históricas, evitando avisos retrospectivos indiscriminados.
 
@@ -108,11 +112,11 @@ En producción se cambia Hibernate a `validate`: aplicar y revisar la migración
 | Frontend automatizado | 57 aprobadas, cero fallos |
 | TypeScript estricto | Aprobado con TypeScript 5.9.3 |
 | Compilación producción | Aprobado con Vite 6.4.6 y API productiva HTTPS |
-| Java, compilación y empaquetado | 44 casos encontrados: 43 aprobados, 1 arnés de navegador omitido por diseño en la suite normal; cero fallos |
+| Java, compilación y empaquetado | 50 casos encontrados: 49 aprobados, 1 arnés de navegador omitido por diseño en la suite normal; cero fallos |
 | Fechas | 5 pruebas Java más escenarios frontend: medianoche, UTC, invierno/verano, consentimiento e históricos sin instante |
 | Correo | Cuatro asuntos, MIME HTML/texto, destinos sin duplicados, ausencia de adjuntos; proveedor simulado |
 | Persistencia/integración | Ambos tipos, múltiples aportes, avisos únicos, fallos SMTP, reintento, descarga con contraseña y pertenencia |
-| Navegador conectado | 8 comprobaciones agrupadas aprobadas en Chrome headless; escritorio 1280 y móvil 375 px |
+| Navegador conectado | 9 comprobaciones agrupadas aprobadas en Chrome headless; escritorio 1280 y móvil 375 px |
 | Avisos de navegación local | 6 eventos persistidos y 6 entregados al mock; 2 creaciones y 4 aportes |
 | Safari/iOS real | Bloqueado: no hay ese entorno disponible; no se marca aprobado |
 | SMTP y R2 reales | Pendiente de prueba operativa autorizada; se usaron mocks |
@@ -190,3 +194,4 @@ Una restauración de base puede perder denuncias nuevas: exige una decisión exp
 Se preparan los repositorios con README, variables vacías, build/tests, lockfile y migración. Los Markdown son los originales completos de la entrega; una copia PDF de lectura no sustituye código, diagramas Mermaid o instrucciones. No se incluyen claves de acceso, dumps ni cesiones contractuales no pactadas.
 
 Sucursales y alojamiento continúan separados de las correcciones del proyecto original. Se conserva el antecedente comercial de **$150.000 CLP de V3** y el saldo pendiente del desarrollo original, sin inventar monto para ese saldo ni nuevas cotizaciones. La validación técnica no implica condonar, recalcular o cambiar esos acuerdos.
+

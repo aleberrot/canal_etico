@@ -16,16 +16,21 @@ class MathiesenCompany {
     ApplicationRunner registerMathiesen(JdbcTemplate jdbc,
             @Value("${MATHIESEN_NOTIFICATION_EMAIL:${app.notifications.recipients:}}") String recipientConfig) {
         return args -> {
-            String recipient = recipientConfig == null ? "" : recipientConfig.split(",")[0].trim();
-            if (recipient == null || recipient.isBlank()) {
-                throw new IllegalStateException("The configured notification recipient must not be blank");
-            }
-            jdbc.update("""
+            boolean exists = Boolean.TRUE.equals(jdbc.queryForObject(
+                    "SELECT EXISTS (SELECT 1 FROM empresas WHERE codigo=?)", Boolean.class, "mathiesen"));
+            if (!exists) {
+                String recipient = java.util.Arrays.stream((recipientConfig == null ? "" : recipientConfig).split(","))
+                        .map(String::trim).filter(value -> !value.isBlank()).findFirst().orElse("");
+                if (recipient.isBlank()) {
+                    throw new IllegalStateException("The configured notification recipient must not be blank for a new client");
+                }
+                jdbc.update("""
                     INSERT INTO empresas (id, codigo, nombre, logo, banner, correo_notificacion, activa, created_at, updated_at)
                     VALUES (?, ?, ?, ?, NULL, ?, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                     ON CONFLICT (codigo) DO NOTHING
                     """, UUID.randomUUID(), "mathiesen", "Grupo Mathiesen",
                     "/empresas/mathiesen/logo.png", recipient);
+            }
             // PPT 15/11/2026, slide 9. Preserve administrative edits on subsequent starts.
             for (String[] branch : new String[][] {
                 {"mathiesen-argentina", "Mathiesen Argentina"},

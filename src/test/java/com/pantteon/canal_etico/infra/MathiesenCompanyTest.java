@@ -9,7 +9,8 @@ class MathiesenCompanyTest {
     @Test void registersSeparateClientUsingConfiguredRecipient() throws Exception {
         var jdbc = mock(JdbcTemplate.class);
         new MathiesenCompany().registerMathiesen(jdbc, "configured@example.invalid").run(null);
-        var calls = mockingDetails(jdbc).getInvocations();
+        var calls = mockingDetails(jdbc).getInvocations().stream()
+                .filter(i -> i.getMethod().getName().equals("update")).toList();
         assertEquals(18, calls.size());
         assertEquals(17, calls.stream().skip(1).map(c -> c.getArguments()[3]).distinct().count());
         Object[] args = calls.iterator().next().getArguments();
@@ -28,6 +29,15 @@ class MathiesenCompanyTest {
         var jdbc = mock(JdbcTemplate.class);
         assertThrows(IllegalStateException.class,
                 () -> new MathiesenCompany().registerMathiesen(jdbc, "").run(null));
-        verifyNoInteractions(jdbc);
+        assertTrue(mockingDetails(jdbc).getInvocations().stream()
+                .noneMatch(i -> i.getMethod().getName().equals("update")));
+    }
+
+    @Test void existingClientCanStartWhileNotificationsAreNotConfigured() {
+        var jdbc = mock(JdbcTemplate.class);
+        when(jdbc.queryForObject(anyString(), eq(Boolean.class), eq("mathiesen"))).thenReturn(true);
+        assertDoesNotThrow(() -> new MathiesenCompany().registerMathiesen(jdbc, "").run(null));
+        assertEquals(17, mockingDetails(jdbc).getInvocations().stream()
+                .filter(i -> i.getMethod().getName().equals("update")).count());
     }
 }

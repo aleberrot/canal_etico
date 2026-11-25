@@ -2,10 +2,10 @@
   "date": "2026-11-24",
   "productionModified": false,
   "frontendTests": 57,
-  "javaFound": 44,
-  "javaPassed": 43,
+  "javaFound": 50,
+  "javaPassed": 49,
   "browserHarnessSkippedInNormalSuite": 1,
-  "chromeCases": 8,
+  "chromeCases": 9,
   "smtpReal": false,
   "r2Real": false,
   "postgresMigrationExecuted": false,
@@ -76,6 +76,26 @@
       "Aporte LEY_KARIN",
       "Nueva GENERAL",
       "Nueva LEY_KARIN"
+    ]
+  },
+  "review": {
+    "issuesFixed": [
+      "existing-client-startup",
+      "notification-sender",
+      "expired-session-company-context"
+    ],
+    "redRegressionFailuresBeforeFix": 3,
+    "normalSuiteFailuresAfterFix": 0,
+    "browserCases": [
+      "Portada escritorio sin desbordamiento",
+      "GENERAL: creación, fecha Chile, 17 sucursales, dos aportes y descarga autenticada",
+      "LEY_KARIN: creación, fecha Chile, 17 sucursales, dos aportes y descarga autenticada",
+      "Administración: dos denuncias, fecha de Chile e Inicio contextual",
+      "Sesión administrativa vencida conserva la empresa seleccionada",
+      "Portada móvil sin desbordamiento",
+      "Empresa 2: consulta, recarga, historial e Inicio preservan contexto",
+      "Formulario Karin móvil sin desbordamiento",
+      "Karin nuevo no reutiliza identidad, teléfono, clave ni archivo"
     ]
   }
 }

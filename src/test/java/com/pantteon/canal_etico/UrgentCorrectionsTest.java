@@ -130,4 +130,21 @@ class UrgentCorrectionsTest {
         verifyNoInteractions(storage);
     }
 
+    org.springframework.mock.web.MockMultipartFile oversizedFile() {
+        return new org.springframework.mock.web.MockMultipartFile("archivo", "synthetic.txt", "text/plain", new byte[]{1}) {
+            @Override public long getSize() { return 50L * 1024 * 1024 + 1; }
+        };
+    }
+    @Test void oversizedInitialFileIsRejectedBeforeStorageOrPersistence() {
+        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+                () -> service.crearDenuncia(request(TipoDenuncia.GENERAL, "", "clave-prueba"), oversizedFile()));
+        verifyNoInteractions(storage); verify(reports, never()).save(any());
+    }
+    @Test void oversizedKarinContributionIsRejectedWithoutAppendingHistory() {
+        trackingReport().setTipoDenuncia(TipoDenuncia.LEY_KARIN);
+        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+                () -> service.agregarInformacionAdicional("DEN-PRUEBA", "clave-correcta", "Prueba", oversizedFile()));
+        verifyNoInteractions(storage); verify(contributions, never()).saveAndFlush(any());
+    }
+
 }

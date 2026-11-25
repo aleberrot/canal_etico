@@ -32,7 +32,17 @@ public class EmailService {
  public boolean configurada(){
   var sender=senders.getIfAvailable();
   if(sender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl && (impl.getHost()==null||impl.getHost().isBlank()))return false;
-  return recipients.length>0&&sender!=null;
+  return recipients.length>0&&sender!=null&&!remitente(sender).isBlank();
+ }
+ private String remitente(JavaMailSender sender){
+  String value=from;
+  if(value.isBlank()&&sender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl)
+   value=impl.getUsername()==null?"":impl.getUsername().trim();
+  if(value.isBlank()||value.contains("\r")||value.contains("\n"))return "";
+  try{
+   var address=new jakarta.mail.internet.InternetAddress(value,true);address.validate();
+   return address.getAddress().contains("@")?value:"";
+  }catch(jakarta.mail.internet.AddressException invalid){return "";}
  }
  public String asunto(NotificacionDenuncia n){
   String tipo=n.getTipo()==TipoDenuncia.LEY_KARIN?"Karin":"General";
@@ -40,9 +50,10 @@ public class EmailService {
  }
  public void enviar(NotificacionDenuncia n) throws jakarta.mail.MessagingException {
   if(!configurada())throw new IllegalStateException("Notification delivery is not configured");
-  var message=senders.getObject().createMimeMessage();
+  var sender=senders.getObject();
+  var message=sender.createMimeMessage();
   var helper=new MimeMessageHelper(message,true,"UTF-8");helper.setTo(recipients);helper.setSubject(asunto(n));
-  if(!from.isBlank())helper.setFrom(from);
+  helper.setFrom(remitente(sender));
   String text="WEBETIKO — Canal de Denuncias\n\n"+asunto(n)+"\n\n"
    +"Evento: "+(n.isAporte()?"Nuevos antecedentes":"Nueva denuncia")
    +"\nEmpresa: "+n.getEmpresa()+"\nSucursal: "+(n.getSucursal()==null?"No informada":n.getSucursal())
@@ -64,7 +75,7 @@ public class EmailService {
   message.saveChanges();
   message.setHeader("Message-ID","<"+n.getId()+"@"+java.net.URI.create(adminUrl).getHost()+">");
   message.setHeader("X-WEBETIKO-Event-ID",n.getId().toString());
-  senders.getObject().send(message);
+  sender.send(message);
  }
  private static String escape(String value){return value==null?"":value.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace("\"","&quot;").replace("'","&#39;");}
  private static String row(String label,String value){return "<tr><td style=\"padding:12px;border-bottom:1px solid #e1e6ef\">"+escape(label)+"</td><td style=\"padding:12px;border-bottom:1px solid #e1e6ef\">"+escape(value)+"</td></tr>";}

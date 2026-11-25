@@ -183,7 +183,7 @@ Los destinatarios se definen una sola vez mediante `NOTIFICATION_RECIPIENTS`, CS
 | Aporte General | Nuevos antecedentes agregados a una Denuncia General |
 | Aporte Karin | Nuevos antecedentes agregados a una Denuncia Karin |
 
-Se envía `multipart/alternative`, HTML con tabla de metadatos y texto plano. Incluye empresa, sucursal, código, tipo, instante de evento y acceso HTTPS al panel. No incluye descripción, tipificación de hechos, identidad, contraseña, archivos ni URL pública R2. El HTML escapa los textos variables. `NOTIFICATION_FROM` configura el remitente; por defecto se usa el usuario SMTP si existe.
+Se envía `multipart/alternative`, HTML con tabla de metadatos y texto plano. Incluye empresa, sucursal, código, tipo, instante de evento y acceso HTTPS al panel. No incluye descripción, tipificación de hechos, identidad, contraseña, archivos ni URL pública R2. El HTML escapa los textos variables. `NOTIFICATION_FROM` configura el remitente; por defecto se usa el usuario SMTP cuando es un buzón válido. Sin remitente válido el aviso permanece pendiente; no se utiliza la identidad de la máquina.
 
 El scheduler procesa como máximo diez avisos pendientes por ciclo, cada 30 segundos por defecto. Hay bloqueo pesimista al consultar, clave única por evento y estados `PENDIENTE`, `ENVIADA`, `FALLIDA`. Los fallos reintentan tras 60, 120, 240 y 480 segundos; el quinto fallo queda para revisión. Sin proveedor o destinatarios disponibles los avisos permanecen pendientes. Los logs guardan ID de evento e intento, sin excepciones SMTP que puedan contener secretos.
 
@@ -240,6 +240,8 @@ El frontend es estático; el backend se construye con Docker multi-stage Maven/T
 | `APP_CLIENTS_MATHIESEN_ENABLED` | Seed PostgreSQL del cliente; desactivar en H2 |
 | `MATHIESEN_NOTIFICATION_EMAIL` | Correo legado del seed; no altera el destino central de avisos |
 
+El seed no exige correo para un cliente ya existente ni sobrescribe su configuración. Para dar de alta un cliente nuevo sí requiere un destinatario de inicialización.
+
 La configuración TLS particular de un proveedor, el almacenamiento de secretos y las políticas de respaldo se verifican en el servicio real. `.env.example` contiene nombres y campos vacíos; Spring Boot requiere exportar las variables, no carga `.env` automáticamente. Las variables Vite son públicas y solo deben contener configuración pública.
 
 ## 19. Instalación local
@@ -294,3 +296,8 @@ La seguridad pendiente del apartado 16 impide declarar la plataforma certificada
 Entregar los dos repositorios en los commits aprobados, documentación, plantillas vacías, lockfiles canónicos, Dockerfile, migraciones, scripts y resultados de pruebas. Excluir `.env` reales, secretos, archivos personales, dumps y ZIP históricos no auditados. Definir quién conserva cuentas, dominios y acceso al proveedor; la entrega de código no implica por sí sola cesión de derechos o credenciales.
 
 Priorizar después de esta validación la protección de intentos públicos, una sesión administrativa más segura, cuentas por cliente si se necesitan, análisis de archivos y una restauración ensayada. Medir carga activa/fría con un protocolo acordado antes de decidir alojamiento. Cada ampliación comercial debe quedar separada de las correcciones del proyecto original.
+
+
+## Reauditoría de correspondencia
+
+La revisión posterior de las PR corrigió el arranque del cliente existente, el remitente de avisos y el contexto tras expirar la sesión. Consultar `AUDITORIA_PR_CLIENTE_20261124.md`; 49 pruebas Java, 57 frontend y 9 comprobaciones Chrome aprobadas. La publicación y los servicios reales continúan pendientes de validación.
