@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 public interface NotificacionRepository extends JpaRepository<NotificacionDenuncia,UUID> {
  boolean existsByEvento(String evento);
+ long countByEstado(NotificacionDenuncia.Estado estado);
  @Lock(LockModeType.PESSIMISTIC_WRITE)
  @Query("select n from NotificacionDenuncia n where n.estado=:estado and n.proximoIntento<=:ahora order by n.ocurridoAt,n.id")
  List<NotificacionDenuncia> pendientes(@Param("estado") NotificacionDenuncia.Estado estado,@Param("ahora") Instant ahora,Pageable page);

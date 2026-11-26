@@ -30,10 +30,18 @@ public class EmailService {
    throw new IllegalArgumentException("Notification admin URL must be HTTPS without credentials or query parameters");
  }
  public boolean configurada(){
-  var sender=senders.getIfAvailable();
-  if(sender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl && (impl.getHost()==null||impl.getHost().isBlank()))return false;
-  return recipients.length>0&&sender!=null&&!remitente(sender).isBlank();
+  return problemaConfiguracion()==null;
  }
+ /** Sanitized operator status, never addresses or credentials. */
+ public String problemaConfiguracion(){
+  var sender=senders.getIfAvailable();
+  if(sender==null)return "SMTP_PROVIDER_MISSING";
+  if(sender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl && (impl.getHost()==null||impl.getHost().isBlank()))return "SMTP_HOST_MISSING";
+  if(recipients.length==0)return "NOTIFICATION_RECIPIENTS_MISSING";
+  if(remitente(sender).isBlank())return "NOTIFICATION_FROM_INVALID";
+  return null;
+ }
+ public int cantidadDestinatarios(){return recipients.length;}
  private String remitente(JavaMailSender sender){
   String value=from;
   if(value.isBlank()&&sender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl)
@@ -66,6 +74,7 @@ public class EmailService {
    +"<p style=\"color:#4432a5;font-weight:bold\">WEBETIKO · Canal de Denuncias</p><h1 style=\"font-size:23px;background:#243e78;color:white;padding:18px\">"+escape(asunto(n))+"</h1>"
    +"<p>Se ha registrado "+(n.isAporte()?"información adicional para una denuncia existente.":"una nueva denuncia.")+"</p>"
    +"<table style=\"border-collapse:collapse;width:100%;font-size:14px\"><thead><tr style=\"background:#e7f2ef\"><th style=\"padding:12px;text-align:left\">Campo</th><th style=\"padding:12px;text-align:left\">Valor</th></tr></thead><tbody>"
+   +row("Evento",n.isAporte()?"Nuevos antecedentes":"Nueva denuncia")
    +row("Empresa",n.getEmpresa())+row("Sucursal",n.getSucursal()==null?"No informada":n.getSucursal())
    +row("Código de denuncia",n.getCodigo())+row("Tipo",n.getTipo()==TipoDenuncia.LEY_KARIN?"Ley Karin":"General")
    +row("Fecha y hora",time.format(n.getOcurridoAt()))+"</tbody></table>"
