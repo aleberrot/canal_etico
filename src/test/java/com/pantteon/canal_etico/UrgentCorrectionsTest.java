@@ -23,7 +23,7 @@ class UrgentCorrectionsTest {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
     SucursalService branches = mock(SucursalService.class);
     DenunciaService service = new DenunciaService(contributions, mock(StorageKeyGenerator.class),
-            storage, reports, companies, mock(EmpresaService.class), branches, mock(EmailService.class), encoder);
+            storage, reports, companies, mock(EmpresaService.class), branches, mock(NotificationQueue.class), new BusinessTime(java.time.Clock.systemUTC()), encoder);
     Empresa company;
 
     @BeforeEach void prepare() {
@@ -128,6 +128,23 @@ class UrgentCorrectionsTest {
                 () -> service.descargarAportePublico("DEN-PRUEBA", "clave-correcta",
                         foreignContribution.toString()));
         verifyNoInteractions(storage);
+    }
+
+    org.springframework.mock.web.MockMultipartFile oversizedFile() {
+        return new org.springframework.mock.web.MockMultipartFile("archivo", "synthetic.txt", "text/plain", new byte[]{1}) {
+            @Override public long getSize() { return 50L * 1024 * 1024 + 1; }
+        };
+    }
+    @Test void oversizedInitialFileIsRejectedBeforeStorageOrPersistence() {
+        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+                () -> service.crearDenuncia(request(TipoDenuncia.GENERAL, "", "clave-prueba"), oversizedFile()));
+        verifyNoInteractions(storage); verify(reports, never()).save(any());
+    }
+    @Test void oversizedKarinContributionIsRejectedWithoutAppendingHistory() {
+        trackingReport().setTipoDenuncia(TipoDenuncia.LEY_KARIN);
+        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+                () -> service.agregarInformacionAdicional("DEN-PRUEBA", "clave-correcta", "Prueba", oversizedFile()));
+        verifyNoInteractions(storage); verify(contributions, never()).saveAndFlush(any());
     }
 
 }

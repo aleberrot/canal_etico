@@ -32,6 +32,7 @@ public record DenunciaAdminResponse(
         java.util.List<AporteDenunciaResponse> aportes,
         boolean tieneArchivo,
         String nombreArchivo,
-        String codigoSucursal, String sucursalNombre
+        String codigoSucursal, String sucursalNombre,
+        java.time.Instant createdAtInstant, java.time.Instant updatedAtInstant
 ) {}
 

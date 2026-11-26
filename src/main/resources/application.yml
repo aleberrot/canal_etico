@@ -1,20 +1,3 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/canal_etico
-    username: postgres
-    password: paconi
-
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
-server:
-  port: 8080
-
-app:
-  notifications:
-    denuncias-recipient: Christian.pinochet@yahoo.cl
+    show-sql: false
