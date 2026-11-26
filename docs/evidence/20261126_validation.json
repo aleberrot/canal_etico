@@ -1,0 +1,264 @@
+{
+  "observedUTC": "2026-11-26T20:23:42.022858+00:00",
+  "dateChile": "2026-11-26",
+  "candidateBranch": "fix-cierre-v2-20261126",
+  "productionWrites": 0,
+  "frontendBase": "14ae5f82b773d33d12b3603cfbdb010a8fc53676",
+  "backendBase": "91bdfac9d784e3219e61a41becc2a7ff54109e1e",
+  "frontendImplementation": "e0357fc162005b293e13b7431fdca2eb906f9dc7",
+  "backendImplementation": "6f303f786bf7615916dc57301c99b54d721af523",
+  "backend": {
+    "totals": {
+      "tests": 57,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "passed": 56,
+    "build": "SUCCESS",
+    "targetJava": 17,
+    "executionJava": "21.0.9",
+    "database": "H2 2.3.232 PostgreSQL mode, local only",
+    "suites": [
+      {
+        "suite": "com.pantteon.canal_etico.AuditBrowserPreviewTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "cases": [
+          "serveIsolatedBrowserSession"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.BusinessTimeTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "chileanEveningDoesNotBecomeTomorrow",
+          "unknownHistoricalTimeIsNeverInvented",
+          "bothSidesOfMidnight",
+          "historicalConsentCorrectsPresentationWithoutChangingDate",
+          "dstUsesTimezoneRulesInsteadOfManualSubtraction"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.CanalEticoApplicationTests",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "contextLoads"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.EmailNotificationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "exactFourSubjectsRecipientsAndSafeMetadata",
+          "blankFromUsesAuthenticatedMailboxInsteadOfMachineIdentity",
+          "missingProviderOrRecipientsDoNotPretendSuccess",
+          "exampleConfigurationHasThreeUniqueMailboxes",
+          "missingMailboxRetainsEventsUntilSenderIsConfigured"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.infra.MathiesenCompanyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "registersSeparateClientUsingConfiguredRecipient",
+          "existingClientCanStartWhileNotificationsAreNotConfigured",
+          "refusesBlankRecipientBeforeDatabaseWrite"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.NotificationDispatcherTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "transportFailuresAreClassifiedWithoutLeakingProviderMessages",
+          "unavailableConfigurationRetainsOutboxWithoutPretendingDelivery",
+          "fifthFailureStopsAutomaticRetries",
+          "smtpFailureRemainsRetryableAndDoesNotTouchReports"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.ObservacionesIntegrationTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "invalidLocationCannotCreateReport",
+          "publicCatalogIsScopedAndAdministrationRequiresAuthentication",
+          "bothReportTypesPersistLocationAndTrackingKeepsOriginalName",
+          "adminCreatesEditsAndDeactivatesWithoutRemovingHistory",
+          "smtpFailureDoesNotDuplicateStoredReportsOrContributions",
+          "generalAndKarinKeepEveryContributionAndQueueEveryEvent",
+          "karinFileDownloadNeedsCorrectPasswordAndOwnership",
+          "adminDetailsStateAndStatisticsPreserveHistoryAndKeepDescargoPrivate",
+          "invalidContributionDoesNotLeaveOrphanNotification",
+          "notificationStatusIsPrivateReadOnlyAndDoesNotExposeAddresses"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.SprintClosureIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "invalidContributionCredentialsAndMissingReportsLeaveNoEventsOrFiles",
+          "temporarySmtpFailureRetainsCommittedDataAndRetriesWithoutDuplicateReportOrMail",
+          "concurrentDispatchersDoNotSendTheSamePendingEventTwice",
+          "bothTypesCommitThreeIndependentContributionsAndSendAllFourKindsThroughSmtp"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.SucursalesIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "invalidLocationCannotCreateReport",
+          "publicCatalogIsScopedAndAdministrationRequiresAuthentication",
+          "bothReportTypesPersistLocationAndTrackingKeepsOriginalName",
+          "adminCreatesEditsAndDeactivatesWithoutRemovingHistory"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.SucursalServiceTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "publicCatalogOmitsInactiveWhileAdminCanSeeBoth",
+          "requiresBranchWhenCompanyHasActiveBranches",
+          "mathiesenNeverSilentlySkipsLocation",
+          "preservesCompatibilityForCompanyWithoutBranches",
+          "renameAndDeactivatePreservesStableCode",
+          "duplicateCodeRejectedBeforeSave",
+          "rejectsAnotherCompanyAndUnknownBranch",
+          "inactiveBranchCannotBeSelected",
+          "returnsActiveBranchOnlyWithinCompany"
+        ]
+      },
+      {
+        "suite": "com.pantteon.canal_etico.UrgentCorrectionsTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          "trackingReturnsBrandingFromAuthenticatedReport",
+          "karinRequiresPhoneBeforePersisting",
+          "missingConsentCannotBypassTerms",
+          "collisionRegeneratesCodeBeforeSaving",
+          "oversizedInitialFileIsRejectedBeforeStorageOrPersistence",
+          "incorrectPasswordCannotExposeTracking",
+          "invalidBranchStopsStorageAndPersistence",
+          "independentReportsAndPasswords",
+          "attachmentFromAnotherReportIsNotReturned",
+          "oversizedContributionsAreRejectedForBothTypesWithoutAppendingHistory",
+          "selectedBranchIsPersistedWithHistoricalName"
+        ]
+      }
+    ],
+    "jarSha256": "666c9ace67ff752b7824f1619deda8ea5d963acea79be27216596c9649081789"
+  },
+  "frontend": {
+    "tests": 66,
+    "passed": 66,
+    "strictTypeScript": "PASS",
+    "productionBuild": "PASS",
+    "browserLoadingScenarios": 2,
+    "browserLoadingUsesMockApi": true
+  },
+  "browserFunctional": {
+    "engine": "Google Chrome headless",
+    "deviceTimezone": "UTC",
+    "cases": [
+      "Portada escritorio sin desbordamiento",
+      "GENERAL: creación, fecha Chile, 17 sucursales, tres aportes y descarga autenticada",
+      "LEY_KARIN: creación, fecha Chile, 17 sucursales, tres aportes y descarga autenticada",
+      "Administración: dos denuncias, fecha de Chile e Inicio contextual",
+      "Sesión administrativa vencida conserva la empresa seleccionada",
+      "Portada móvil sin desbordamiento",
+      "Empresa 2: consulta, recarga, historial e Inicio preservan contexto",
+      "Formulario Karin móvil sin desbordamiento",
+      "Karin nuevo no reutiliza identidad, teléfono, clave ni archivo"
+    ],
+    "productionWrites": 0
+  },
+  "browserMockOutbox": {
+    "events": 8,
+    "deliveredToMock": 8,
+    "subjects": [
+      "Aporte GENERAL",
+      "Aporte GENERAL",
+      "Aporte GENERAL",
+      "Aporte LEY_KARIN",
+      "Aporte LEY_KARIN",
+      "Aporte LEY_KARIN",
+      "Nueva GENERAL",
+      "Nueva LEY_KARIN"
+    ]
+  },
+  "smtp": {
+    "provider": "JavaMailSenderImpl to synthetic loopback SMTP sink",
+    "realInboxDeliveryVerified": false,
+    "mainScenarioAcceptedMessages": 8,
+    "mainScenarioDistinctMessageIds": 8,
+    "subjects": {
+      "Detalle de la Denuncia General": 1,
+      "Detalle de la Denuncia Karin": 1,
+      "Nuevos antecedentes agregados a una Denuncia General": 3,
+      "Nuevos antecedentes agregados a una Denuncia Karin": 3
+    },
+    "syntheticRecipientsPerMessage": 3,
+    "temporary451FailureAndRetry": "PASS",
+    "twoConcurrentDispatchersOneMessage": "PASS",
+    "committedReportsAndContributionsAfterFailure": "PASS"
+  },
+  "publicDeploymentProbe": {
+    "observedUTC": "2026-11-26T20:12:42.747784+00:00",
+    "frontend": {
+      "url": "https://canaletico.absoftwareworks.com/canal/mathiesen",
+      "status": 200,
+      "seconds": 5.88,
+      "bytes": 544,
+      "bundle": {
+        "url": "https://canaletico.absoftwareworks.com/assets/index-CuNZRHrc.js",
+        "status": 200,
+        "seconds": 5.32,
+        "bytes": 295588,
+        "renderApi": true,
+        "retiredOracle": false
+      }
+    },
+    "backend": {
+      "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/mathiesen",
+      "error": "TimeoutError",
+      "seconds": 70.04
+    }
+  },
+  "productionBlockers": [
+    "Render plan, deployed backend commit, environment presence and SMTP logs not accessible",
+    "API timed out on 26 November",
+    "Real PostgreSQL migration/state not inspected",
+    "Real R2 privacy and delivery to authorized inboxes not verified"
+  ]
+}

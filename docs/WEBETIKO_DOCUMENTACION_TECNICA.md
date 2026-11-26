@@ -1,6 +1,6 @@
 # WEBETIKO — Documentación técnica y transferencia
 
-**Edición:** 24/11/2026. **Estado:** candidata para revisión; no desplegada. Fuente funcional: `WEBETIKO_OBSERVACIONES_23112026.pptx`, 20 láminas, y requisitos anteriores conservados. Las referencias de versiones y pruebas corresponden a esta candidata, no a una certificación de producción.
+**Edición:** 26/11/2026. **Estado:** candidata V2 para revisión; no desplegada. Fuente prioritaria: `WEBETIKO_OBSERVACIONES_V2__26112026.pptx` (12 láminas), PPT de 23/11 y requisitos anteriores conservados. Las referencias de implementación no certifican producción; ver `WEBETIKO_CORRECCIONES_26112026.md` para evidencias y bloqueos actuales.
 
 ## 1. Objetivo y alcance
 
@@ -46,7 +46,7 @@ La SPA consume JSON y multipart por HTTPS. La API valida solicitudes, consentimi
 
 ## 4. Repositorios y carpetas
 
-Frontend: `aleberrot/canalEticov6`, rama principal `main`. Backend: `aleberrot/canal_etico`, rama principal `master`. Candidata en ambos: `fix-observaciones-20261123`. Los commits y PR de entrega se registran en el reporte de cambios.
+Frontend: `aleberrot/canalEticov6`, rama principal `main`, base verificada `14ae5f82b773d33d12b3603cfbdb010a8fc53676`. Backend: `aleberrot/canal_etico`, rama principal `master`, base verificada `91bdfac9d784e3219e61a41becc2a7ff54109e1e`. Se enumeraron las ramas antes de elegir estas bases; las correcciones previas están fusionadas. Candidata de este sprint en ambos: `fix-cierre-v2-20261126`. No se conoce el SHA backend productivo actual.
 
 | Ruta | Responsabilidad |
 | --- | --- |
@@ -70,7 +70,7 @@ Frontend: `aleberrot/canalEticov6`, rama principal `main`. Backend: `aleberrot/c
 
 ## 5. Funcionamiento del frontend
 
-La portada del canal carga la empresa y muestra General, Ley Karin y consulta. El encabezado principal solicitado es `WEBETICO`; el subtítulo es `Canal de Denuncias`. La marca comercial y su imagen mantienen `WEBETIKO` con K. El componente `WebetikoBrand` usa el recurso recuperado de la PPT; `ClientLogo` conserva el logo de Mathiesen u otro cliente.
+La portada del canal carga la empresa y muestra General, Ley Karin y consulta. El encabezado principal es `WEBETIKO` y el subtítulo `Canal de Denuncias`. La indicación expresa posterior del usuario corrige la C de la antigua lámina 6. El componente `WebetikoBrand` usa el recurso recuperado de la PPT; `ClientLogo` conserva el logo de Mathiesen u otro cliente.
 
 `Inicio` dirige a `/canal/{codigo}`. Consulta y acceso administrativo reciben `?empresa={codigo}`; el estado autenticado utiliza además la empresa devuelta por el servidor. La selección de empresa nunca se deriva del código de denuncia ni de una contraseña. Las rutas rechazan destinos externos o códigos malformados. El canal por defecto es Mathiesen, configurable con `VITE_DEFAULT_EMPRESA_CODE`.
 
@@ -301,3 +301,63 @@ Priorizar después de esta validación la protección de intentos públicos, una
 ## Reauditoría de correspondencia
 
 La revisión posterior de las PR corrigió el arranque del cliente existente, el remitente de avisos y el contexto tras expirar la sesión. Consultar `AUDITORIA_PR_CLIENTE_20261124.md`; 49 pruebas Java, 57 frontend y 9 comprobaciones Chrome aprobadas. La publicación y los servicios reales continúan pendientes de validación.
+
+
+## 26. Operación de notificaciones: revisión V2 del 26/11
+
+Se reutilizan EmailService, NotificationQueue, NotificationDispatcher, NotificacionDenuncia y la tabla de eventos. La creación y el aporte guardan su evento en la misma transacción SQL; SMTP se procesa después, en otra transacción. No se llama al transporte antes del commit del negocio. El frontend nunca reintenta un POST automáticamente. GENERAL y LEY_KARIN reutilizan AporteDenuncia 1:N sin límite fijo.
+
+```mermaid
+sequenceDiagram
+  participant API as API
+  participant DB as PostgreSQL
+  participant Worker as Despachador
+  participant SMTP as Transporte SMTP
+  API->>DB: Denuncia o aporte más evento
+  DB-->>API: Commit
+  Worker->>DB: Bloquear pendientes confirmados
+  Worker->>SMTP: Aviso con metadatos
+  SMTP-->>Worker: Aceptación o error
+  Worker->>DB: Estado e intento
+```
+
+ENVIADA significa aceptada por el transporte, no llegada al buzón. La ventana de caída entre aceptación SMTP y commit de estado sigue existiendo. Message-ID estable y bloqueo pesimista evitan duplicados ordinarios, pero no ofrecen exactly-once ni acreditan lectura. Los cinco intentos y el máximo de diez eventos por ciclo se mantienen. Un fallo al guardar la outbox revierte la operación SQL; un fallo SMTP posterior conserva denuncia, aporte y evento.
+
+### Diagnóstico sin secretos
+
+`GET /api/admin/notificaciones/estado` requiere el rol ADMIN existente, usa Cache-Control no-store y no envía mensajes ni permite reintentos. Devuelve habilitado, configurada, problemaConfiguracion, cantidadDestinatarios, pendientes, aceptadasPorTransporte y fallidas. No entrega buzones, contraseñas, cuerpos de denuncias, IDs de personas ni credenciales SMTP. Reutiliza configuración y repositorio; no crea otra cola o motor de envío.
+
+Configuración incompleta se anuncia una vez por cambio: SMTP_PROVIDER_MISSING, SMTP_HOST_MISSING, NOTIFICATION_RECIPIENTS_MISSING o NOTIFICATION_FROM_INVALID. No se consume un intento mientras falta configuración. Tras recuperar configuración, se registra la reanudación. Los fallos de transporte conservan únicamente una categoría: SMTP_AUTHENTICATION_FAILED, SMTP_TIMEOUT, SMTP_DNS_FAILED, SMTP_CONNECTION_FAILED, SMTP_TLS_FAILED, SMTP_REJECTED o SMTP_DELIVERY_FAILED. Se recorren causas encadenadas sin imprimir mensajes de excepción, credenciales ni destinos.
+
+### SMTP y TLS
+
+Mantener NOTIFICATION_RECIPIENTS como lista CSV única en el entorno del servidor. Los tres destinos se cotejaron con la V2 y la configuración central existente; no se duplican en controladores ni pruebas. El remitente debe ser un buzón autorizado por el proveedor. No basta con copiar .env.example al repositorio: Render debe tener las variables efectivas y NOTIFICATIONS_ENABLED=true para ejecutar el scheduler.
+
+| Transporte | Variables |
+| --- | --- |
+| STARTTLS, normalmente 587 | SMTP_SSL_ENABLED=false; SMTP_STARTTLS_ENABLED=true; SMTP_STARTTLS_REQUIRED=true |
+| TLS implícito, normalmente 465 | SMTP_SSL_ENABLED=true; SMTP_STARTTLS_ENABLED=false; SMTP_STARTTLS_REQUIRED=false |
+
+No desactivar TLS en producción. La excepción sin TLS de la prueba se limita al servidor SMTP sintético 127.0.0.1. SMTP_HOST, SMTP_PORT, SMTP_USERNAME y SMTP_PASSWORD conservan compatibilidad con sus alias MAIL_. No existe selección automática de proveedor HTTP ni contratación de servicios.
+
+Render documenta el bloqueo de salida SMTP 25/465/587 en Free y la suspensión tras inactividad. Fuentes oficiales consultadas: https://render.com/docs/free y https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports. El plan activo no fue inspeccionado; por tanto el bloqueo de puertos es una hipótesis condicionada, no una causa productiva confirmada. No cambiar de plan ni proveedor sin autorización y cotización si implica costos.
+
+### Despliegue real y frontend
+
+Vercel compila con scripts/build-vercel.mjs y deployment/production-api.mjs: el origen HTTPS de Render es el predeterminado y VITE_CANAL_API_URL permite un override validado. El alias histórico VITE_API_URL no decide el destino productivo. No reintroducir la IP Oracle ni depender de un .env.production versionado. La carga de catálogos usa AbortController y temporizadores compatibles de 90 s; consulta 15 s y edición de sucursal 30 s. La espera cubre lectura JSON y respeta cancelación al navegar.
+
+En la comprobación del 26/11 el frontend sirvió index-CuNZRHrc.js con el origen correcto; las consultas a Render agotaron 55-65 s de timeout configurado (tiempo total observado hasta 70 s). No puede determinarse solo desde el cliente si es arranque en frío, conectividad, base de datos, instancia detenida o fallo interno. Verificar logs y plan antes de clasificarlo. Comparar una primera carga tras inactividad con solicitudes sucesivas y métricas del servidor.
+
+### Procedimiento de validación y reversión
+
+Verificar respaldo PostgreSQL, R2 privado y variables sin imprimir valores. Comparar primero esquema efectivo con operations/20261124_observaciones.sql: esta candidata no agrega migración nueva. Esa migración anterior sigue siendo necesaria si faltan sus columnas/tabla. Usar usuario de migración autorizado; el perfil prod ejecuta ddl-auto=validate.
+
+Con scheduler desactivado, activar la candidata en staging, comprobar estado administrativo y ejecutar los cuatro eventos con datos sintéticos y SMTP simulado. Revisar destinos/remitente efectivos antes de activar envíos. No crear avisos retroactivos masivos para denuncias anteriores. Para una prueba en buzones reales, obtener autorización, acordar los casos y confirmar recepción con los destinatarios, además de aceptación por el transporte.
+
+Rollback: desactivar el scheduler, volver al frontend/backend previamente verificados y conservar tablas, columnas, denuncias, aportes y eventos. No revertir restaurando toda la base sobre denuncias nuevas ni borrar la outbox. Revisar manualmente el proveedor antes de reintentar un evento fallido; no reiniciar estados masivamente. No existe endpoint de reenvío en esta entrega.
+
+### Ensayos nuevos y límites
+
+SprintClosureIntegrationTest utiliza MockMvc, H2 en modo PostgreSQL, commits reales de prueba, R2 simulado y JavaMailSenderImpl contra un servidor SMTP desechable en loopback. Cubre los cuatro asuntos y tres destinatarios sintéticos, tres aportes por tipo (texto, archivo, ambos), ocho eventos, fallo temporal y reintento, bloqueo concurrente, persistencia y privacidad de contenido. LoopbackSmtp no transmite fuera del proceso de prueba. Los tests de seguridad mantienen el rechazo de credenciales incorrectas, denuncia ausente, archivos ajenos y más de 50 MiB.
+
+H2 es un entorno equivalente de ensayo, no PostgreSQL real. La concurrencia se comprueba allí y debe revalidarse en staging PostgreSQL. R2 es simulado; el endpoint público y la consola del bucket deben comprobarse con acceso autorizado. No se verificaron SMTP ni buzones productivos. La matriz de evidencia y los comandos están en el reporte del sprint.
