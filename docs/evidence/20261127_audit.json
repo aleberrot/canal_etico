@@ -1,0 +1,524 @@
+{
+  "observedUTC": "2026-11-27T15:30:09.869485+00:00",
+  "productionWrites": 0,
+  "frontendMain": "303b58dc9ed5f0eb2530962585a1784bdaf89c8f",
+  "backendMaster": "1210baff0172d5432a6bc97923b54d881154c00d",
+  "previousCandidateIdenticalToMergedCode": true,
+  "userReportedRender": {
+    "plan": "Free",
+    "commit": "2c3f3ce",
+    "commitCertainty": "approximate, as reported by user; dashboard not directly inspected"
+  },
+  "productionApiContract": {
+    "newInstantFields": false,
+    "notificationStatusEndpoint": false
+  },
+  "oldCommitCodeReviewed": {
+    "commit": "2c3f3ce",
+    "karinContributionsExplicitlyRejected": true,
+    "generalContributionsDoNotQueueNotification": true,
+    "creationUsesOldSingleRecipientPlainTextTemplate": true
+  },
+  "smtpPlanRestriction": {
+    "source": "https://render.com/docs/free",
+    "freeBlockedPorts": [
+      25,
+      465,
+      587
+    ],
+    "codeDefaultSmtpPort": 587,
+    "effectiveRuntimeHostPortInspected": false
+  },
+  "publicHttp": {
+    "observedUTC": "2026-11-27T15:17:18.459173+00:00",
+    "productionWrites": 0,
+    "frontend": {
+      "url": "https://canaletico.absoftwareworks.com/",
+      "status": 200,
+      "seconds": 5.63,
+      "cors": "*",
+      "bytes": 544,
+      "bundle": {
+        "url": "https://canaletico.absoftwareworks.com/assets/index-CuNZRHrc.js",
+        "status": 200,
+        "seconds": 4.86,
+        "cors": "*",
+        "bytes": 295588,
+        "renderApi": true,
+        "oracle": false,
+        "wrongBrand": false
+      }
+    },
+    "endpoints": [
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/mathiesen",
+        "status": 200,
+        "seconds": 6.42,
+        "cors": "https://canaletico.absoftwareworks.com",
+        "bytes": 115,
+        "company": {
+          "codigo": "mathiesen",
+          "nombre": "Grupo Mathiesen",
+          "logo": "/empresas/mathiesen/logo.png",
+          "banner": null,
+          "activa": true
+        }
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/mathiesen/sucursales",
+        "status": 200,
+        "seconds": 6.65,
+        "cors": "https://canaletico.absoftwareworks.com",
+        "bytes": 1160,
+        "branches": [
+          {
+            "codigo": "agrovet",
+            "nombre": "Agrovet",
+            "activa": true
+          },
+          {
+            "codigo": "empresa-argentina-cdv",
+            "nombre": "Empresa Argentina CDV S.A.",
+            "activa": true
+          },
+          {
+            "codigo": "luval",
+            "nombre": "Luval",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-argentina",
+            "nombre": "Mathiesen Argentina",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-bolivia",
+            "nombre": "Mathiesen Bolivia",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-brasil",
+            "nombre": "Mathiesen Brasil",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-cam",
+            "nombre": "Mathiesen CAM",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-chile",
+            "nombre": "Mathiesen Chile",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-colombia",
+            "nombre": "Mathiesen Colombia",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-espana",
+            "nombre": "Mathiesen España",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-mexico",
+            "nombre": "Mathiesen Mexico",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-paraguay",
+            "nombre": "Mathiesen Paraguay",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-peru",
+            "nombre": "Mathiesen Perú",
+            "activa": true
+          },
+          {
+            "codigo": "mathiesen-uruguay",
+            "nombre": "Mathiesen Uruguay",
+            "activa": true
+          },
+          {
+            "codigo": "quimatic",
+            "nombre": "Quimatic",
+            "activa": true
+          },
+          {
+            "codigo": "sercoin",
+            "nombre": "Sercoin",
+            "activa": true
+          },
+          {
+            "codigo": "soolimpex",
+            "nombre": "Soolimpex",
+            "activa": true
+          }
+        ]
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/emp-01",
+        "status": 200,
+        "seconds": 6.15,
+        "cors": "https://canaletico.absoftwareworks.com",
+        "bytes": 130,
+        "company": {
+          "codigo": "emp-01",
+          "nombre": "Empresa 1",
+          "logo": "/empresas/emp-01/logo.webp",
+          "banner": "/empresas/emp-01/banner.webp",
+          "activa": true
+        }
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/api/empresas/emp-02",
+        "status": 200,
+        "seconds": 6.34,
+        "cors": "https://canaletico.absoftwareworks.com",
+        "bytes": 80,
+        "company": {
+          "codigo": "emp-02",
+          "nombre": "Empresa 2",
+          "logo": null,
+          "banner": null,
+          "activa": true
+        }
+      },
+      {
+        "url": "https://canal-etico-api-w9dm.onrender.com/v3/api-docs",
+        "status": 200,
+        "seconds": 16.38,
+        "cors": "https://canaletico.absoftwareworks.com",
+        "bytes": 15686,
+        "schemas": {
+          "CrearDenunciaResponse": [
+            "codigo",
+            "tipo",
+            "descripcion",
+            "estado",
+            "fechaCreacion"
+          ],
+          "AporteDenunciaResponse": [
+            "id",
+            "informacion",
+            "nombreArchivo",
+            "tieneArchivo",
+            "createdAt",
+            "legacy"
+          ],
+          "SeguimientoDenunciaResponse": [
+            "codigoUnico",
+            "tipoDenuncia",
+            "delitoTipificacion",
+            "estado",
+            "descripcion",
+            "informacionAdicional",
+            "conclusionesMedidas",
+            "createdAt",
+            "updatedAt",
+            "fechaIncidente",
+            "aportes",
+            "empresa",
+            "sucursalNombre"
+          ],
+          "SeguimientoRequest": [
+            "codigo",
+            "password"
+          ]
+        },
+        "notificationStatusEndpoint": false
+      }
+    ]
+  },
+  "publicBrowser": {
+    "observedUTC": "2026-11-27T15:19:55.026Z",
+    "checks": [
+      {
+        "channel": "mathiesen",
+        "seconds": 10.885,
+        "links": [
+          {
+            "text": "Enviar denuncia generalPermite omitir tus datos personales",
+            "href": "/canal/mathiesen/denuncia"
+          },
+          {
+            "text": "Enviar denuncia por Ley KarinRequiere identificación del denunciante",
+            "href": "/canal/mathiesen/denuncia-ley-karin"
+          },
+          {
+            "text": "Consultar denunciaUsa tu código y contraseña de seguimiento",
+            "href": "/tracking?empresa=mathiesen"
+          },
+          {
+            "text": "Acceso administrativo",
+            "href": "/admin?empresa=mathiesen"
+          }
+        ],
+        "logos": [
+          {
+            "alt": "Logo de Grupo Mathiesen",
+            "loaded": true
+          },
+          {
+            "alt": "WEBETIKO — Grupo Conthrol Tech",
+            "loaded": true
+          }
+        ]
+      },
+      {
+        "channel": "emp-01",
+        "seconds": 0.576,
+        "links": [
+          {
+            "text": "Enviar denuncia generalPermite omitir tus datos personales",
+            "href": "/canal/emp-01/denuncia"
+          },
+          {
+            "text": "Enviar denuncia por Ley KarinRequiere identificación del denunciante",
+            "href": "/canal/emp-01/denuncia-ley-karin"
+          },
+          {
+            "text": "Consultar denunciaUsa tu código y contraseña de seguimiento",
+            "href": "/tracking?empresa=emp-01"
+          },
+          {
+            "text": "Acceso administrativo",
+            "href": "/admin?empresa=emp-01"
+          }
+        ],
+        "logos": [
+          {
+            "alt": "Logo de Empresa 1",
+            "loaded": true
+          },
+          {
+            "alt": "WEBETIKO — Grupo Conthrol Tech",
+            "loaded": true
+          },
+          {
+            "alt": "Banner de Empresa 1",
+            "loaded": true
+          }
+        ]
+      },
+      {
+        "channel": "emp-02",
+        "seconds": 1.088,
+        "links": [
+          {
+            "text": "Enviar denuncia generalPermite omitir tus datos personales",
+            "href": "/canal/emp-02/denuncia"
+          },
+          {
+            "text": "Enviar denuncia por Ley KarinRequiere identificación del denunciante",
+            "href": "/canal/emp-02/denuncia-ley-karin"
+          },
+          {
+            "text": "Consultar denunciaUsa tu código y contraseña de seguimiento",
+            "href": "/tracking?empresa=emp-02"
+          },
+          {
+            "text": "Acceso administrativo",
+            "href": "/admin?empresa=emp-02"
+          }
+        ],
+        "logos": [
+          {
+            "alt": "WEBETIKO — Grupo Conthrol Tech",
+            "loaded": true
+          }
+        ]
+      },
+      {
+        "route": "denuncia",
+        "width": 1280,
+        "termsRequired": true,
+        "overflow": false
+      },
+      {
+        "route": "denuncia-ley-karin",
+        "width": 1280,
+        "termsRequired": true,
+        "overflow": false
+      },
+      {
+        "route": "denuncia",
+        "width": 375,
+        "termsRequired": true,
+        "overflow": false
+      },
+      {
+        "route": "denuncia-ley-karin",
+        "width": 375,
+        "termsRequired": true,
+        "overflow": false
+      },
+      {
+        "path": "/tracking?empresa=mathiesen",
+        "passwordEmpty": true,
+        "companyPreserved": true
+      },
+      {
+        "path": "/admin?empresa=mathiesen",
+        "passwordEmpty": true,
+        "companyPreserved": true
+      }
+    ],
+    "errors": [],
+    "productionWrites": 0
+  },
+  "adminContextRegression": {
+    "before": {
+      "expected": "mathiesen",
+      "actual": "emp-01",
+      "testFailedAsExpected": true
+    },
+    "after": {
+      "passed": true,
+      "cases": [
+        {
+          "browser": "actual, 1280px",
+          "checks": [
+            "WEBETIKO",
+            "General y Karin",
+            "sucursal seleccionable",
+            "contrase├▒a vac├¡a",
+            "sin desborde",
+            "login conserva empresa con cat├ílogo reordenado",
+            "recuperaci├│n 503"
+          ],
+          "passed": true
+        },
+        {
+          "browser": "sin AbortSignal.any/timeout, 375px",
+          "checks": [
+            "WEBETIKO",
+            "General y Karin",
+            "sucursal seleccionable",
+            "contrase├▒a vac├¡a",
+            "sin desborde",
+            "login conserva empresa con cat├ílogo reordenado",
+            "recuperaci├│n 503"
+          ],
+          "passed": true
+        }
+      ]
+    },
+    "api": "synthetic route interception only"
+  },
+  "creationDateRegression": {
+    "before": {
+      "expected": "2026-11-23",
+      "actual": "2026-11-20",
+      "testFailedAsExpected": true
+    },
+    "after": "passed in full suite for General and Karin; incident date preserved",
+    "storage": "H2 test only"
+  },
+  "backendValidation": {
+    "totals": {
+      "tests": 58,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "passed": 57,
+    "build": "SUCCESS",
+    "suites": [
+      {
+        "name": "com.pantteon.canal_etico.AuditBrowserPreviewTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.pantteon.canal_etico.BusinessTimeTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.CanalEticoApplicationTests",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.EmailNotificationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.infra.MathiesenCompanyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.NotificationDispatcherTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.ObservacionesIntegrationTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.SprintClosureIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.SucursalesIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.SucursalServiceTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.pantteon.canal_etico.UrgentCorrectionsTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "frontendValidation": {
+    "tests": 66,
+    "passed": 66,
+    "failures": 0,
+    "strictTypeScript": "PASS",
+    "productionBuild": "PASS"
+  },
+  "limitations": [
+    "SMTP inbox receipt not verified",
+    "PostgreSQL production migration not inspected",
+    "R2 real privacy not inspected",
+    "No authenticated production admin case inspected",
+    "No production complaint submission or term acceptance",
+    "New fixes remain unmerged and undeployed"
+  ]
+}
