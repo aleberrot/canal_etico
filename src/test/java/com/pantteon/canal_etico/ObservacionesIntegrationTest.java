@@ -78,4 +78,29 @@ class ObservacionesIntegrationTest extends SucursalesIntegrationTest {
   mvc.perform(multipart("/api/denuncias/"+code+"/informacion-adicional").file(new MockMultipartFile("password","","text/plain","synthetic-password".getBytes())))
    .andExpect(status().isConflict());assertEquals(1,notifications.count());assertEquals(0,contributions.count());
  }
+ @Test void notificationStatusIsPrivateReadOnlyAndDoesNotExposeAddresses() throws Exception {
+  create("GENERAL");when(email.configurada()).thenReturn(true);when(email.cantidadDestinatarios()).thenReturn(3);
+  mvc.perform(get("/api/admin/notificaciones/estado")).andExpect(status().isUnauthorized());
+  var response=mvc.perform(get("/api/admin/notificaciones/estado").header("Authorization",auth))
+   .andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store"))
+   .andExpect(jsonPath("$.cantidadDestinatarios").value(3)).andExpect(jsonPath("$.pendientes").value(1))
+   .andReturn().getResponse().getContentAsString();
+  assertFalse(response.contains("@"));assertFalse(response.contains("password"));verify(email,never()).enviar(any());
+ }
+ @Test void adminDetailsStateAndStatisticsPreserveHistoryAndKeepDescargoPrivate() throws Exception {
+  for(String type:List.of("GENERAL","LEY_KARIN")){
+   String code=create(type);contribute(code,"Antecedente sintético",false);
+   mvc.perform(patch("/api/admin/denuncias/"+code+"/detalle").header("Authorization",auth).contentType("application/json")
+    .content("{\"nombreDenunciado\":\"Persona sintética\",\"fechaDescargo\":\"2026-11-26\",\"descargo\":\"Descargo privado sintético\",\"conclusionesMedidas\":\"Conclusión sintética\"}"))
+    .andExpect(status().isOk()).andExpect(jsonPath("$.aportes.length()").value(1)).andExpect(jsonPath("$.descargo").value("Descargo privado sintético"));
+   mvc.perform(patch("/api/admin/denuncias/"+code+"/estado").header("Authorization",auth).param("estado","EN_REVISION"))
+    .andExpect(status().isOk()).andExpect(jsonPath("$.estado").value("EN_REVISION"));
+   var response=mvc.perform(post("/api/denuncias/seguimiento").contentType("application/json").content(json.writeValueAsBytes(Map.of("code",code,"password","synthetic-password"))))
+    .andExpect(status().isOk()).andExpect(jsonPath("$.aportes.length()").value(1)).andExpect(jsonPath("$.conclusionesMedidas").value("Conclusión sintética"))
+    .andReturn().getResponse().getContentAsString();
+   assertFalse(response.contains("Descargo privado sintético"));
+  }
+  mvc.perform(get("/api/admin/empresas/mathiesen/estadisticas").header("Authorization",auth)).andExpect(status().isOk());
+  assertEquals(4,notifications.count());
+ }
 }

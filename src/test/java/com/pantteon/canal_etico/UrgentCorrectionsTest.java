@@ -140,10 +140,13 @@ class UrgentCorrectionsTest {
                 () -> service.crearDenuncia(request(TipoDenuncia.GENERAL, "", "clave-prueba"), oversizedFile()));
         verifyNoInteractions(storage); verify(reports, never()).save(any());
     }
-    @Test void oversizedKarinContributionIsRejectedWithoutAppendingHistory() {
-        trackingReport().setTipoDenuncia(TipoDenuncia.LEY_KARIN);
-        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
-                () -> service.agregarInformacionAdicional("DEN-PRUEBA", "clave-correcta", "Prueba", oversizedFile()));
+    @Test void oversizedContributionsAreRejectedForBothTypesWithoutAppendingHistory() {
+        var report = trackingReport();
+        for (var type : TipoDenuncia.values()) {
+            report.setTipoDenuncia(type);
+            assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+                    () -> service.agregarInformacionAdicional("DEN-PRUEBA", "clave-correcta", "Prueba", oversizedFile()));
+        }
         verifyNoInteractions(storage); verify(contributions, never()).saveAndFlush(any());
     }
 

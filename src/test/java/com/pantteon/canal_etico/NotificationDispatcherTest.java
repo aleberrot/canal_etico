@@ -31,4 +31,19 @@ class NotificationDispatcherTest {
   doThrow(new IllegalStateException("synthetic")).when(email).enviar(n);
   dispatcher.procesarPendientes();assertEquals(NotificacionDenuncia.Estado.FALLIDA,n.getEstado());
  }
+ @Test void transportFailuresAreClassifiedWithoutLeakingProviderMessages() throws Exception {
+  var cases=Map.<Exception,String>of(
+   new org.springframework.mail.MailAuthenticationException("synthetic-secret"),"SMTP_AUTHENTICATION_FAILED",
+   new org.springframework.mail.MailSendException("synthetic-secret",new jakarta.mail.MessagingException("private provider text",new java.net.SocketTimeoutException("synthetic-secret"))),"SMTP_TIMEOUT",
+   new org.springframework.mail.MailSendException("synthetic",new java.net.UnknownHostException("private-host")),"SMTP_DNS_FAILED",
+   new org.springframework.mail.MailSendException("synthetic",new javax.net.ssl.SSLHandshakeException("private-host")),"SMTP_TLS_FAILED",
+   new org.springframework.mail.MailSendException("synthetic",new java.net.ConnectException("private-host")),"SMTP_CONNECTION_FAILED");
+  for(var entry:cases.entrySet()){
+   var n=new NotificacionDenuncia();reset(email);when(email.configurada()).thenReturn(true);
+   when(repository.pendientes(any(),any(),any())).thenReturn(List.of(n));
+   doThrow(entry.getKey()).when(email).enviar(n);
+   dispatcher.procesarPendientes();assertEquals(entry.getValue(),n.getUltimoError());
+   assertEquals(NotificacionDenuncia.Estado.PENDIENTE,n.getEstado());
+  }
+ }
 }
