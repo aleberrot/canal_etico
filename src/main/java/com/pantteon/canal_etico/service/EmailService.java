@@ -36,7 +36,10 @@ public class EmailService {
  public String problemaConfiguracion(){
   var sender=senders.getIfAvailable();
   if(sender==null)return "SMTP_PROVIDER_MISSING";
-  if(sender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl && (impl.getHost()==null||impl.getHost().isBlank()))return "SMTP_HOST_MISSING";
+  if(sender instanceof com.pantteon.canal_etico.infra.GmailApiMailSender gmail){
+   if(gmail.configurationProblem()!=null)return gmail.configurationProblem();
+   if(!from.isBlank()&&!from.equalsIgnoreCase(gmail.getUsername()))return "GMAIL_API_FROM_MISMATCH";
+  }else if(sender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl && (impl.getHost()==null||impl.getHost().isBlank()))return "SMTP_HOST_MISSING";
   if(recipients.length==0)return "NOTIFICATION_RECIPIENTS_MISSING";
   if(remitente(sender).isBlank())return "NOTIFICATION_FROM_INVALID";
   return null;
