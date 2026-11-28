@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local OAuth credentials must never be committed.
+.env
+.env.local
+.secrets/
+client_secret*.json
+gmail-token*.json

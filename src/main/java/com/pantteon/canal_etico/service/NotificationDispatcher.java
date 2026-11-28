@@ -25,7 +25,7 @@ public class NotificationDispatcher {
    n.setIntentos(n.getIntentos()+1);
    try{
     email.enviar(n);n.setEstado(Estado.ENVIADA);n.setEnviadoAt(time.now());n.setUltimoError(null);
-    log.info("Notification event {} accepted by SMTP transport",n.getId());
+    log.info("Notification event {} accepted by mail transport",n.getId());
    }catch(Exception error){
     n.setUltimoError(codigoError(error));
     n.setProximoIntento(time.now().plusSeconds(Math.min(3600,60L*(1L<<Math.min(n.getIntentos()-1,6)))));
@@ -40,6 +40,7 @@ public class NotificationDispatcher {
   var visited=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<Throwable,Boolean>());
   while(!pending.isEmpty()&&visited.size()<32){
    var current=pending.removeFirst();if(!visited.add(current))continue;
+   if(current instanceof com.pantteon.canal_etico.infra.GmailApiMailSender.DeliveryException gmail)return gmail.code();
    if(current instanceof org.springframework.mail.MailAuthenticationException || current instanceof jakarta.mail.AuthenticationFailedException)return "SMTP_AUTHENTICATION_FAILED";
    if(current instanceof java.net.SocketTimeoutException)return "SMTP_TIMEOUT";
    if(current instanceof java.net.UnknownHostException)return "SMTP_DNS_FAILED";
