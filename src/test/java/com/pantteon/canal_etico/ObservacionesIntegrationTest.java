@@ -87,6 +87,20 @@ class ObservacionesIntegrationTest extends SucursalesIntegrationTest {
    .andReturn().getResponse().getContentAsString();
   assertFalse(response.contains("@"));assertFalse(response.contains("password"));verify(email,never()).enviar(any());
  }
+ @Test void creationResponseUsesRegistrationDateInsteadOfIncidentDateForBothTypes() throws Exception {
+  for(String type:List.of("GENERAL","LEY_KARIN")){
+   var data=(com.fasterxml.jackson.databind.node.ObjectNode)json.readTree(request(type,"chile"));
+   data.put("fechaIncidente","2026-11-20");
+   var response=mvc.perform(multipart("/api/denuncias")
+    .file(new MockMultipartFile("data","data.json","application/json",json.writeValueAsBytes(data))))
+    .andExpect(status().isCreated()).andExpect(jsonPath("$.fechaCreacion").value("2026-11-23"))
+    .andReturn().getResponse().getContentAsString();
+   String code=json.readTree(response).get("codigo").asText();
+   var stored=reports.findByCodigoUnico(code).orElseThrow();
+   assertEquals(LocalDate.of(2026,11,20),stored.getFechaIncidente());
+   assertEquals(LocalDate.of(2026,11,23),stored.getCreatedAt());
+  }
+ }
  @Test void adminDetailsStateAndStatisticsPreserveHistoryAndKeepDescargoPrivate() throws Exception {
   for(String type:List.of("GENERAL","LEY_KARIN")){
    String code=create(type);contribute(code,"Antecedente sintético",false);

@@ -225,7 +225,7 @@ public class DenunciaService {
                 denuncia.getTipoDenuncia().name(),
                 denuncia.getDescripcion(),
                 denuncia.getEstado(),
-                denuncia.getFechaIncidente()
+                denuncia.getCreatedAt()
         );
     }
 

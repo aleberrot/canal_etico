@@ -1,0 +1,27 @@
+{
+  "observedUTC": "2026-11-28T16:51:33.728195+00:00",
+  "backendBase": "7161a8e6e00a990df1ea161e0a66cd96899cba59",
+  "tests": {
+    "tests": 60,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1
+  },
+  "passed": 59,
+  "packagedScriptMatchesReviewedOperationsFile": true,
+  "sqlSha256": "86ebce6d604ebf320d8c2ad0f1863783c7d26c179ef7543d8f18f8024befcadc",
+  "activationDefault": "never",
+  "hibernateProductionMode": "validate",
+  "backup": {
+    "reportedBy": "user",
+    "ageHours": 23,
+    "restoreTested": false
+  },
+  "serviceId": "srv-dbnmki3m8hqs73cl517g",
+  "failedDeployId": "dep-dc4pv50u01pc73evfc0g",
+  "failedCommit": "1210baff0172d5432a6bc97923b54d881154c00d",
+  "oldLiveCommit": "2c3f3ce28d123f37aa46516d802a3e79dbc3ad69",
+  "rootCause": "missing column last_activity_at in denuncias",
+  "productionMigrationExecuted": false,
+  "productionMailTests": 0
+}
